@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>主页</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .home-container {
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 83px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #f5d020;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .user-info h2 {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .user-info p {
+      font-size: 12px;
+      color: #a0aec0;
+      margin: 0;
+    }
+    
+    .resources {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .resource {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .resource i {
+      color: #f5d020;
+    }
+    
+    .daily-check-in {
+      margin: 15px 20px;
+      background: linear-gradient(135deg, rgba(245, 208, 32, 0.2), rgba(245, 56, 3, 0.2));
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(245, 208, 32, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .daily-check-in-info h3 {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0;
+      color: #f5d020;
+    }
+    
+    .daily-check-in-info p {
+      font-size: 12px;
+      color: #e0e0e0;
+      margin: 5px 0 0;
+    }
+    
+    .check-in-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(245, 56, 3, 0.3);
+    }
+    
+    .section-title {
+      padding: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 25px 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .section-title span {
+      color: #a0aec0;
+      font-size: 14px;
+      font-weight: normal;
+    }
+    
+    .battle-cards {
+      padding: 0 20px;
+      display: flex;
+      overflow-x: auto;
+      gap: 15px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding-bottom: 15px;
+    }
+    
+    .battle-cards::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .battle-card {
+      flex: 0 0 auto;
+      width: 200px;
+      height: 250px;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .battle-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .battle-card:hover img {
+      transform: scale(1.05);
+    }
+    
+    .battle-card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+      padding: 20px 15px;
+    }
+    
+    .battle-card-overlay h3 {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0 0 5px;
+    }
+    
+    .battle-card-overlay p {
+      font-size: 12px;
+      color: #a0aec0;
+      margin: 0;
+    }
+    
+    .battle-difficulty {
+      display: flex;
+      gap: 3px;
+      margin-top: 5px;
+    }
+    
+    .battle-difficulty i {
+      color: #f5d020;
+      font-size: 12px;
+    }
+    
+    .featured-sections {
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .featured-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.3s ease;
+    }
+    
+    .featured-section:hover {
+      transform: translateY(-5px);
+    }
+    
+    .featured-section-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    
+    .icon-gold {
+      background: linear-gradient(135deg, #ffd700, #e6c200);
+      color: #0d1117;
+    }
+    
+    .icon-wood {
+      background: linear-gradient(135deg, #00a86b, #008f5b);
+      color: #fff;
+    }
+    
+    .icon-water {
+      background: linear-gradient(135deg, #1e90ff, #0077ea);
+      color: #fff;
+    }
+    
+    .icon-fire {
+      background: linear-gradient(135deg, #ff4500, #e53e00);
+      color: #fff;
+    }
+    
+    .featured-section h3 {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 5px 0 0;
+    }
+    
+    .featured-section p {
+      font-size: 12px;
+      color: #a0aec0;
+      margin: 0;
+    }
+    
+    .news-updates {
+      padding: 0 20px;
+      margin-bottom: 20px;
+    }
+    
+    .news-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 15px;
+    }
+    
+    .news-date {
+      font-size: 12px;
+      color: #a0aec0;
+      margin: 0;
+    }
+    
+    .news-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    
+    .news-description {
+      font-size: 14px;
+      color: #e0e0e0;
+      margin: 0;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="home-container">
+    <div class="header">
+      <div class="user-profile">
+        <div class="avatar">
+          <span>U</span>
+        </div>
+        <div class="user-info">
+          <h2>用户名</h2>
+          <p>Lv.5 • 金木水火土</p>
+        </div>
+      </div>
+      
+      <div class="resources">
+        <div class="resource">
+          <i class="fas fa-gem"></i>
+          <span>1,250</span>
+        </div>
+        <div class="resource">
+          <i class="fas fa-coins"></i>
+          <span>8,520</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="daily-check-in">
+      <div class="daily-check-in-info">
+        <h3>每日健康问答</h3>
+        <p>今日尚未完成，快去获取新的塔防元素!</p>
+      </div>
+      <a href="daily_questions_list.html" class="check-in-button">
+        去答题 <i class="fas fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+    
+    <div class="section-title">
+      每日挑战
+      <span>查看全部 <i class="fas fa-chevron-right"></i></span>
+    </div>
+    
+    <div class="battle-cards">
+      <a href="battle_preparation.html" class="battle-card">
+        <img src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="Battle">
+        <div class="battle-card-overlay">
+          <h3>木属性挑战</h3>
+          <p>使用木系塔防御火系敌人</p>
+          <div class="battle-difficulty">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+            <i class="far fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+        </div>
+      </a>
+      
+      <a href="battle_preparation.html" class="battle-card">
+        <img src="https://images.unsplash.com/photo-1465101162946-4377e57745c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1378&q=80" alt="Battle">
+        <div class="battle-card-overlay">
+          <h3>水属性挑战</h3>
+          <p>运用水系塔克制火系敌人</p>
+          <div class="battle-difficulty">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+        </div>
+      </a>
+      
+      <a href="battle_preparation.html" class="battle-card">
+        <img src="https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1376&q=80" alt="Battle">
+        <div class="battle-card-overlay">
+          <h3>火属性挑战</h3>
+          <p>使用火系塔击败金系敌人</p>
+          <div class="battle-difficulty">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+        </div>
+      </a>
+    </div>
+    
+    <div class="section-title">
+      五行之力
+      <span>查看全部 <i class="fas fa-chevron-right"></i></span>
+    </div>
+    
+    <div class="featured-sections">
+      <a href="tower_collection.html" class="featured-section">
+        <div class="featured-section-icon icon-gold">
+          <i class="fas fa-coins"></i>
+        </div>
+        <h3>金系塔</h3>
+        <p>已收集 3/8</p>
+      </a>
+      
+      <a href="tower_collection.html" class="featured-section">
+        <div class="featured-section-icon icon-wood">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <h3>木系塔</h3>
+        <p>已收集 5/8</p>
+      </a>
+      
+      <a href="tower_collection.html" class="featured-section">
+        <div class="featured-section-icon icon-water">
+          <i class="fas fa-tint"></i>
+        </div>
+        <h3>水系塔</h3>
+        <p>已收集 4/8</p>
+      </a>
+      
+      <a href="tower_collection.html" class="featured-section">
+        <div class="featured-section-icon icon-fire">
+          <i class="fas fa-fire"></i>
+        </div>
+        <h3>火系塔</h3>
+        <p>已收集 2/8</p>
+      </a>
+    </div>
+    
+    <div class="section-title">
+      最新公告
+    </div>
+    
+    <div class="news-updates">
+      <div class="news-item">
+        <p class="news-date">2023-06-01</p>
+        <h3 class="news-title">五行塔防 v1.2 版本更新</h3>
+        <p class="news-description">新增塔合成功能，现在可以将低级塔升级为高级塔，提升战斗力!</p>
+      </div>
+      
+      <div class="news-item">
+        <p class="news-date">2023-05-20</p>
+        <h3 class="news-title">新增五行卡片系统</h3>
+        <p class="news-description">塔可以装备相生相克的增益卡片，合理搭配可获得更强效果。</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item active">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions_list.html" class="nav-item">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate daily check-in
+      gsap.from('.daily-check-in', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate section titles
+      gsap.from('.section-title', {
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.2,
+        delay: 0.4,
+        ease: 'power3.out'
+      });
+      
+      // Animate battle cards
+      gsap.from('.battle-card', {
+        x: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      // Animate featured sections
+      gsap.from('.featured-section', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate news items
+      gsap.from('.news-item', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        delay: 1,
+        ease: 'power3.out'
+      });
+      
+      // Animate bottom navigation
+      gsap.from('.bottom-nav', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 1.2,
+        ease: 'power3.out'
+      });
+    });
+  </script>
+</body>
+</html>

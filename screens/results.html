@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>战斗结果</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .results-container {
+      height: 100vh;
+      background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .results-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(13, 17, 23, 0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .results-card {
+      width: 100%;
+      max-width: 360px;
+      background: rgba(26, 26, 46, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .results-header {
+      padding: 20px;
+      text-align: center;
+      background: linear-gradient(90deg, #f5d020, #f53803);
+    }
+    
+    .victory {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+    }
+    
+    .defeat {
+      background: linear-gradient(90deg, #3f5efb, #fc466b);
+    }
+    
+    .result-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .result-subtitle {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+    
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin: 10px 0;
+    }
+    
+    .star-rating i {
+      font-size: 24px;
+      color: #f5d020;
+    }
+    
+    .results-content {
+      padding: 20px;
+    }
+    
+    .battle-info {
+      margin-bottom: 20px;
+    }
+    
+    .battle-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .element-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+    
+    .element-badge.water {
+      background: rgba(30, 144, 255, 0.2);
+      color: #1e90ff;
+    }
+    
+    .element-badge i {
+      margin-right: 3px;
+    }
+    
+    .battle-difficulty {
+      font-size: 14px;
+      color: #a0aec0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .battle-difficulty i {
+      color: #f5d020;
+      font-size: 12px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #f5d020;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .rewards-section {
+      margin-bottom: 20px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title i {
+      color: #f5d020;
+    }
+    
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    
+    .reward-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    
+    .reward-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 5px;
+    }
+    
+    .reward-name {
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .reward-amount {
+      font-size: 12px;
+      color: #f5d020;
+    }
+    
+    .tower-used {
+      margin-bottom: 20px;
+    }
+    
+    .tower-list {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    .tower-list::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .tower-item {
+      width: 70px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px 5px;
+      text-align: center;
+    }
+    
+    .tower-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 5px;
+    }
+    
+    .tower-tier {
+      display: flex;
+      justify-content: center;
+      gap: 2px;
+      margin-top: 5px;
+    }
+    
+    .tower-tier i {
+      color: #f5d020;
+      font-size: 10px;
+    }
+    
+    .results-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .action-button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .retry-button {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .next-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 15px rgba(245, 56, 3, 0.3);
+    }
+    
+    .fireworks {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .firework {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="results-container">
+    <div class="fireworks" id="fireworks">
+      <!-- Fireworks will be generated by JavaScript -->
+    </div>
+    
+    <div class="results-overlay">
+      <div class="results-card">
+        <div class="results-header victory">
+          <div class="result-title">战斗胜利!</div>
+          <div class="result-subtitle">恭喜你成功击退了敌人的进攻</div>
+          <div class="star-rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        
+        <div class="results-content">
+          <div class="battle-info">
+            <div class="battle-name">
+              水属性挑战 <span class="element-badge water"><i class="fas fa-tint"></i> 水</span>
+            </div>
+            <div class="battle-difficulty">
+              难度:
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="far fa-star"></i>
+              <i class="far fa-star"></i>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value">15</div>
+              <div class="stat-label">击败敌人</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">02:47</div>
+              <div class="stat-label">战斗时间</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">4/5</div>
+              <div class="stat-label">剩余生命</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">320</div>
+              <div class="stat-label">剩余金币</div>
+            </div>
+          </div>
+          
+          <div class="rewards-section">
+            <div class="section-title">
+              <i class="fas fa-gift"></i> 获得奖励
+            </div>
+            <div class="rewards-grid">
+              <div class="reward-item">
+                <div class="reward-icon">
+                  <i class="fas fa-coins text-yellow-400 text-2xl"></i>
+                </div>
+                <div class="reward-name">金币</div>
+                <div class="reward-amount">+450</div>
+              </div>
+              <div class="reward-item">
+                <div class="reward-icon">
+                  <i class="fas fa-gem text-blue-400 text-2xl"></i>
+                </div>
+                <div class="reward-name">宝石</div>
+                <div class="reward-amount">+25</div>
+              </div>
+              <div class="reward-item">
+                <div class="reward-icon">
+                  <i class="fas fa-chess-rook text-green-400 text-2xl"></i>
+                </div>
+                <div class="reward-name">塔碎片</div>
+                <div class="reward-amount">+15</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tower-used">
+            <div class="section-title">
+              <i class="fas fa-chess-rook"></i> 使用的塔
+            </div>
+            <div class="tower-list">
+              <div class="tower-item">
+                <div class="tower-icon">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#1e90ff" />
+                        <stop offset="100%" stop-color="#0077ea" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#waterGradient)" />
+                    <circle cx="100" cy="60" r="25" fill="#4eabff" />
+                    <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" />
+                    <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+                  </svg>
+                </div>
+                <div class="tower-tier">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+              
+              <div class="tower-item">
+                <div class="tower-icon">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#00a86b" />
+                        <stop offset="100%" stop-color="#008f5b" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#woodGradient)" />
+                    <circle cx="100" cy="60" r="25" fill="#00c47f" />
+                    <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#00c47f" />
+                    <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#00734a" />
+                  </svg>
+                </div>
+                <div class="tower-tier">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </div>
+              
+              <div class="tower-item">
+                <div class="tower-icon">
+                  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffd700" />
+                        <stop offset="100%" stop-color="#e6c200" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#goldGradient)" />
+                    <circle cx="100" cy="60" r="25" fill="#ffdf33" />
+                    <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ffdf33" />
+                    <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#b39700" />
+                  </svg>
+                </div>
+                <div class="tower-tier">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="results-actions">
+            <a href="battle.html" class="action-button retry-button">再试一次</a>
+            <a href="home.html" class="action-button next-button">返回主页</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create fireworks animation
+      createFireworks();
+      
+      // Animate results card
+      gsap.from('.results-card', {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: 'back.out(1.5)'
+      });
+      
+      // Animate star rating
+      gsap.from('.star-rating i', {
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.2,
+        delay: 0.5,
+        ease: 'back.out(1.7)'
+      });
+      
+      // Animate stats
+      gsap.from('.stat-item', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate rewards
+      gsap.from('.reward-item', {
+        scale: 0,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        delay: 1,
+        ease: 'back.out(1.7)'
+      });
+      
+      // Animate tower list
+      gsap.from('.tower-item', {
+        x: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 1.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate action buttons
+      gsap.from('.action-button', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        delay: 1.4,
+        ease: 'power3.out'
+      });
+    });
+    
+    function createFireworks() {
+      const fireworksContainer = document.getElementById('fireworks');
+      const colors = ['#f5d020', '#f53803', '#1e90ff', '#00a86b', '#e53e3e'];
+      
+      for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+          createFirework(fireworksContainer, colors);
+        }, i * 300);
+      }
+    }
+    
+    function createFirework(container, colors) {
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const size = Math.random() * 5 + 3;
+      
+      // Create firework starting point
+      const firework = document.createElement('div');
+      firework.className = 'firework';
+      firework.style.left = `${x}%`;
+      firework.style.top = `${y}%`;
+      firework.style.width = `${size}px`;
+      firework.style.height = `${size}px`;
+      firework.style.backgroundColor = color;
+      
+      container.appendChild(firework);
+      
+      // Animate firework
+      gsap.to(firework, {
+        opacity: 1,
+        duration: 0.5,
+        ease: 'power1.out',
+        onComplete: () => {
+          // Create particles
+          for (let i = 0; i < 10; i++) {
+            createParticle(container, x, y, color);
+          }
+          
+          // Remove firework
+          firework.remove();
+        }
+      });
+    }
+    
+    function createParticle(container, x, y, color) {
+      const particle = document.createElement('div');
+      particle.className = 'firework';
+      particle.style.left = `${x}%`;
+      particle.style.top = `${y}%`;
+      particle.style.width = '3px';
+      particle.style.height = '3px';
+      particle.style.backgroundColor = color;
+      particle.style.opacity = '1';
+      
+      container.appendChild(particle);
+      
+      // Animate particle
+      gsap.to(particle, {
+        x: (Math.random() - 0.5) * 100,
+        y: (Math.random() - 0.5) * 100,
+        opacity: 0,
+        duration: 1 + Math.random(),
+        ease: 'power3.out',
+        onComplete: () => {
+          particle.remove();
+        }
+      });
+    }
+  </script>
+</body>
+</html>

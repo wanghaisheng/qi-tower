@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每日问题</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .questions-container {
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 83px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .question-progress {
+      padding: 20px 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .progress-text {
+      font-size: 14px;
+      color: #a0aec0;
+    }
+    
+    .progress-percentage {
+      font-size: 14px;
+      font-weight: bold;
+      color: #f5d020;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      border-radius: 4px;
+    }
+    
+    .question-card {
+      margin: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .question-type {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(245, 208, 32, 0.2);
+      padding: 5px 10px;
+      border-bottom-left-radius: 10px;
+      font-size: 12px;
+      color: #f5d020;
+    }
+    
+    .question-number {
+      font-size: 14px;
+      color: #a0aec0;
+      margin-bottom: 10px;
+    }
+    
+    .question-text {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .question-description {
+      font-size: 14px;
+      color: #e0e0e0;
+      margin-bottom: 20px;
+    }
+    
+    .answer-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .answer-option {
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .answer-option:hover {
+      background: rgba(245, 208, 32, 0.1);
+      border-color: rgba(245, 208, 32, 0.3);
+    }
+    
+    .answer-option.selected {
+      background: rgba(245, 208, 32, 0.2);
+      border-color: #f5d020;
+    }
+    
+    .option-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .answer-option.selected .option-radio {
+      border-color: #f5d020;
+    }
+    
+    .option-radio-inner {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #f5d020;
+      display: none;
+    }
+    
+    .answer-option.selected .option-radio-inner {
+      display: block;
+    }
+    
+    .option-text {
+      font-size: 16px;
+    }
+    
+    .question-navigation {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      margin-top: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .question-button {
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .prev-button {
+      background: rgba(255, 255, 255, 0.1);
+      color: #a0aec0;
+    }
+    
+    .next-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(245, 56, 3, 0.3);
+    }
+    
+    .question-footer {
+      text-align: center;
+      padding: 0 20px 20px;
+    }
+    
+    .skip-all {
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .element-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 15px;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+    
+    .element-badge.gold {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+    }
+    
+    .element-badge.wood {
+      background: rgba(0, 168, 107, 0.2);
+      color: #00a86b;
+    }
+    
+    .element-badge.water {
+      background: rgba(30, 144, 255, 0.2);
+      color: #1e90ff;
+    }
+    
+    .element-badge.fire {
+      background: rgba(255, 69, 0, 0.2);
+      color: #ff4500;
+    }
+    
+    .element-badge.earth {
+      background: rgba(205, 133, 63, 0.2);
+      color: #cd853f;
+    }
+    
+    .element-badge i {
+      margin-right: 3px;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+    
+    .tower-reward {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(13, 17, 23, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      width: 80%;
+      max-width: 320px;
+      text-align: center;
+      border: 1px solid rgba(245, 208, 32, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      z-index: 1001;
+      opacity: 0;
+      display: none;
+    }
+    
+    .reward-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      background: linear-gradient(to right, #f5d020, #f53803);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .reward-image {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 20px;
+    }
+    
+    .reward-description {
+      font-size: 16px;
+      color: #e0e0e0;
+      margin-bottom: 25px;
+    }
+    
+    .reward-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(245, 56, 3, 0.3);
+    }
+    
+    .reward-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      opacity: 0;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="questions-container">
+    <div class="header">
+      <h1>每日健康问答</h1>
+      <a href="daily_questions_list.html" class="close-button">
+        <i class="fas fa-times"></i>
+      </a>
+    </div>
+    
+    <div class="question-progress">
+      <div class="progress-header">
+        <div class="progress-text">今日进度: 45/180</div>
+        <div class="progress-percentage">25%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+    
+    <div class="question-card">
+      <div class="question-type">
+        肝 <span class="element-badge wood"><i class="fas fa-leaf"></i> 木</span>
+      </div>
+      <div class="question-number">问题 46/180</div>
+      <div class="question-text">您容易感到焦虑或烦躁吗？</div>
+      <div class="question-description">这个问题与情绪和肝脏功能相关，可能影响木属性的能量平衡。</div>
+      
+      <div class="answer-options">
+        <div class="answer-option" onclick="selectOption(this)">
+          <div class="option-radio">
+            <div class="option-radio-inner"></div>
+          </div>
+          <div class="option-text">从不</div>
+        </div>
+        
+        <div class="answer-option" onclick="selectOption(this)">
+          <div class="option-radio">
+            <div class="option-radio-inner"></div>
+          </div>
+          <div class="option-text">偶尔</div>
+        </div>
+        
+        <div class="answer-option" onclick="selectOption(this)">
+          <div class="option-radio">
+            <div class="option-radio-inner"></div>
+          </div>
+          <div class="option-text">有时</div>
+        </div>
+        
+        <div class="answer-option" onclick="selectOption(this)">
+          <div class="option-radio">
+            <div class="option-radio-inner"></div>
+          </div>
+          <div class="option-text">经常</div>
+        </div>
+        
+        <div class="answer-option" onclick="selectOption(this)">
+          <div class="option-radio">
+            <div class="option-radio-inner"></div>
+          </div>
+          <div class="option-text">总是</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="question-navigation">
+      <button class="question-button prev-button">上一题</button>
+      <button class="question-button next-button" onclick="showReward()">下一题</button>
+    </div>
+    
+    <div class="question-footer">
+      <a href="tower_collection.html" class="skip-all">跳过全部并查看今日获得的塔 <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions.html" class="nav-item active">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <!-- Tower Reward Popup -->
+  <div class="reward-overlay" id="rewardOverlay"></div>
+  <div class="tower-reward" id="towerReward">
+    <h2 class="reward-title">获得新塔!</h2>
+    <div class="reward-image">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00a86b" />
+            <stop offset="100%" stop-color="#008f5b" />
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <circle cx="100" cy="100" r="90" fill="none" stroke="url(#woodGradient)" stroke-width="3" />
+        <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#woodGradient)" />
+        <circle cx="100" cy="60" r="25" fill="#00c47f" filter="url(#glow)" />
+        <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#00c47f" filter="url(#glow)" />
+        <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#00734a" />
+        <circle cx="100" cy="60" r="15" fill="#004d32" />
+        <path d="M90,60 C90,55 95,50 100,50 C105,50 110,55 110,60 C110,65 105,70 100,70 C95,70 90,65 90,60 Z" fill="#ffffff" opacity="0.3" />
+      </svg>
+    </div>
+    <p class="reward-description">木系治愈塔 (Tier 2)<br>能为周围友军提供持续治疗效果</p>
+    <button class="reward-button" onclick="hideReward()">太棒了!</button>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate progress
+      gsap.from('.question-progress', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate question card
+      gsap.from('.question-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.4,
+        ease: 'power3.out'
+      });
+      
+      // Animate buttons
+      gsap.from('.question-navigation', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      // Animate footer
+      gsap.from('.question-footer', {
+        y: 10,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.8,
+        ease: 'power3.out'
+      });
+    });
+    
+    function selectOption(element) {
+      // Remove selected class from all options
+      document.querySelectorAll('.answer-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      // Add selected class to clicked option
+      element.classList.add('selected');
+    }
+    
+    function showReward() {
+      const overlay = document.getElementById('rewardOverlay');
+      const reward = document.getElementById('towerReward');
+      
+      overlay.style.display = 'block';
+      reward.style.display = 'block';
+      
+      gsap.to(overlay, {
+        opacity: 1,
+        duration: 0.3,
+        ease: 'power2.out'
+      });
+      
+      gsap.to(reward, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        ease: 'back.out(1.7)'
+      });
+      
+      // Animate the reward image
+      gsap.from('.reward-image svg', {
+        rotation: 360,
+        scale: 0.5,
+        opacity: 0,
+        duration: 1,
+        ease: 'elastic.out(1, 0.5)'
+      });
+    }
+    
+    function hideReward() {
+      const overlay = document.getElementById('rewardOverlay');
+      const reward = document.getElementById('towerReward');
+      
+      gsap.to(overlay, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete: () => {
+          overlay.style.display = 'none';
+        }
+      });
+      
+      gsap.to(reward, {
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete: () => {
+          reward.style.display = 'none';
+          // Navigate to the next question
+          // In a real app, you'd update the UI to show the next question
+        }
+      });
+    }
+  </script>
+</body>
+</html>

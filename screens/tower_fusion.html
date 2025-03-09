@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>塔融合</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .fusion-container {
+      height: 100vh;
+      padding-top: 44px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .close-button {
+      font-size: 24px;
+      color: #a0aec0;
+    }
+    
+    .fusion-resources {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .resource {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .resource i {
+      color: #f5d020;
+    }
+    
+    .fusion-area {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    .fusion-slots {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .fusion-slot {
+      width: 120px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .fusion-slot.filled {
+      border-style: solid;
+      border-color: rgba(245, 208, 32, 0.3);
+      background: rgba(245, 208, 32, 0.05);
+    }
+    
+    .slot-title {
+      position: absolute;
+      top: -10px;
+      background: rgba(13, 17, 23, 0.8);
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .fusion-tower {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .fusion-plus {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 18px;
+      color: #a0aec0;
+    }
+    
+    .tower-details {
+      font-size: 12px;
+      color: #e0e0e0;
+      text-align: center;
+      margin-top: 10px;
+    }
+    
+    .tower-tier {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      margin-top: 5px;
+    }
+    
+    .tower-tier i {
+      color: #f5d020;
+      font-size: 10px;
+    }
+    
+    .fusion-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(245, 56, 3, 0.3);
+      opacity: 0.5;
+    }
+    
+    .fusion-button.active {
+      opacity: 1;
+    }
+    
+    .available-towers {
+      padding: 20px;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding-bottom: 5px;
+    }
+    
+    .filter-buttons::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .filter-button {
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      font-size: 12px;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      color: #a0aec0;
+    }
+    
+    .filter-button.active {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+    }
+    
+    .tower-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    
+    .tower-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .tower-card:hover {
+      transform: translateY(-5px);
+      background: rgba(245, 208, 32, 0.1);
+      border-color: rgba(245, 208, 32, 0.3);
+    }
+    
+    .tower-card.selected {
+      background: rgba(245, 208, 32, 0.1);
+      border-color: #f5d020;
+    }
+    
+    .tower-icon {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .tower-name {
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .tower-stats {
+      font-size: 10px;
+      color: #a0aec0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .card-tier {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 10px;
+      color: #f5d020;
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+    
+    .tower-expires {
+      font-size: 10px;
+      color: #ff4500;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .element-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      margin-top: 5px;
+    }
+    
+    .element-badge.gold {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+    }
+    
+    .element-badge.wood {
+      background: rgba(0, 168, 107, 0.2);
+      color: #00a86b;
+    }
+    
+    .element-badge.water {
+      background: rgba(30, 144, 255, 0.2);
+      color: #1e90ff;
+    }
+    
+    .element-badge.fire {
+      background: rgba(255, 69, 0, 0.2);
+      color: #ff4500;
+    }
+    
+    .element-badge.earth {
+      background: rgba(205, 133, 63, 0.2);
+      color: #cd853f;
+    }
+    
+    .element-badge i {
+      margin-right: 3px;
+    }
+    
+    .fusion-result {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .result-container {
+      background: rgba(26, 26, 46, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      width: 300px;
+      text-align: center;
+      border: 1px solid rgba(245, 208, 32, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .result-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #f5d020, #f53803);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .result-tower {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+    }
+    
+    .result-info {
+      font-size: 16px;
+      color: #e0e0e0;
+      margin-bottom: 20px;
+    }
+    
+    .result-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    
+    .result-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .result-stat-value {
+      font-size: 16px;
+      font-weight: bold;
+      color: #f5d020;
+    }
+    
+    .result-stat-label {
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .result-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="fusion-container">
+    <div class="header">
+      <h1>塔融合</h1>
+      <a href="tower_collection.html" class="close-button">
+        <i class="fas fa-times"></i>
+      </a>
+    </div>
+    
+    <div class="fusion-area">
+      <div class="fusion-resources">
+        <div class="resource">
+          <i class="fas fa-coins"></i>
+          <span>3,240</span>
+        </div>
+        <div class="resource">
+          <i class="fas fa-fire"></i>
+          <span>精华: 15</span>
+        </div>
+      </div>
+      
+      <div class="fusion-slots">
+        <div class="fusion-slot" id="slot1" onclick="selectSlot(1)">
+          <div class="slot-title">材料塔 1</div>
+          <div class="fusion-tower">
+            <i class="fas fa-plus text-gray-500 text-2xl"></i>
+          </div>
+        </div>
+        
+        <div class="fusion-plus">
+          <i class="fas fa-plus"></i>
+        </div>
+        
+        <div class="fusion-slot" id="slot2" onclick="selectSlot(2)">
+          <div class="slot-title">材料塔 2</div>
+          <div class="fusion-tower">
+            <i class="fas fa-plus text-gray-500 text-2xl"></i>
+          </div>
+        </div>
+      </div>
+      
+      <button class="fusion-button" id="fusionButton" onclick="startFusion()">
+        开始融合
+      </button>
+      
+      <div class="tower-details">
+        <p>选择两个相同属性的塔进行融合，有几率获得更高级的塔</p>
+        <p>融合成功率: <span class="text-yellow-400">70%</span></p>
+      </div>
+    </div>
+    
+    <div class="available-towers">
+      <div class="section-title">
+        可用于融合的塔
+      </div>
+      
+      <div class="filter-buttons">
+        <div class="filter-button active" onclick="filterTowers('all')">全部</div>
+        <div class="filter-button" onclick="filterTowers('gold')">金系塔</div>
+        <div class="filter-button" onclick="filterTowers('wood')">木系塔</div>
+        <div class="filter-button" onclick="filterTowers('water')">水系塔</div>
+        <div class="filter-button" onclick="filterTowers('fire')">火系塔</div>
+        <div class="filter-button" onclick="filterTowers('earth')">土系塔</div>
+      </div>
+      
+      <div class="tower-grid">
+        <div class="tower-card" id="tower1" onclick="selectTower(1)">
+          <div class="card-tier">
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+          <div class="tower-icon">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffd700" />
+                  <stop offset="100%" stop-color="#e6c200" />
+                </linearGradient>
+              </defs>
+              <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#goldGradient)" />
+              <circle cx="100" cy="60" r="25" fill="#ffdf33" />
+              <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ffdf33" />
+              <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#b39700" />
+            </svg>
+          </div>
+          <div class="tower-name">金属塔</div>
+          <div class="element-badge gold"><i class="fas fa-coins"></i> 金</div>
+          <div class="tower-expires">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        
+        <div class="tower-card" id="tower2" onclick="selectTower(2)">
+          <div class="card-tier">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+          <div class="tower-icon">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00a86b" />
+                  <stop offset="100%" stop-color="#008f5b" />
+                </linearGradient>
+              </defs>
+              <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#woodGradient)" />
+              <circle cx="100" cy="60" r="25" fill="#00c47f" />
+              <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#00c47f" />
+              <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#00734a" />
+            </svg>
+          </div>
+          <div class="tower-name">生命树塔</div>
+          <div class="element-badge wood"><i class="fas fa-leaf"></i> 木</div>
+          <div class="tower-expires">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        
+        <div class="tower-card" id="tower3" onclick="selectTower(3)">
+          <div class="card-tier">
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+          <div class="tower-icon">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#1e90ff" />
+                  <stop offset="100%" stop-color="#0077ea" />
+                </linearGradient>
+              </defs>
+              <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#waterGradient)" />
+              <circle cx="100" cy="60" r="25" fill="#4eabff" />
+              <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" />
+              <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+            </svg>
+          </div>
+          <div class="tower-name">水流塔</div>
+          <div class="element-badge water"><i class="fas fa-tint"></i> 水</div>
+          <div class="tower-expires">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        
+        <div class="tower-card" id="tower4" onclick="selectTower(4)">
+          <div class="card-tier">
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+          <div class="tower-icon">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="fireGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ff4500" />
+                  <stop offset="100%" stop-color="#e53e00" />
+                </linearGradient>
+              </defs>
+              <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#fireGradient)" />
+              <circle cx="100" cy="60" r="25" fill="#ff6433" />
+              <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ff6433" />
+              <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#cc3700" />
+            </svg>
+          </div>
+          <div class="tower-name">火焰塔</div>
+          <div class="element-badge fire"><i class="fas fa-fire"></i> 火</div>
+          <div class="tower-expires">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        
+        <div class="tower-card" id="tower5" onclick="selectTower(5)">
+          <div class="card-tier">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+          <div class="tower-icon">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#cd853f" />
+                  <stop offset="100%" stop-color="#b07339" />
+                </linearGradient>
+              </defs>
+              <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#earthGradient)" />
+              <circle cx="100" cy="60" r="25" fill="#d79955" />
+              <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#d79955" />
+              <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#966035" />
+            </svg>
+          </div>
+          <div class="tower-name">岩石塔</div>
+          <div class="element-badge earth"><i class="fas fa-mountain"></i> 土</div>
+          <div class="tower-expires">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        
+        <div class="tower-card" id="tower6" onclick="selectTower(6)">
+          <div class="card-tier">
+            <i class="fas fa-star"></i>
+            <i class="far fa-star"></i>
+            <i class="far fa-star"></i>
+          </div>
+          <div class="tower-icon">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="waterGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#1e90ff" />
+                  <stop offset="100%" stop-color="#0077ea" />
+                </linearGradient>
+              </defs>
+              <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#waterGradient2)" />
+              <circle cx="100" cy="60" r="25" fill="#4eabff" />
+              <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" />
+              <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+            </svg>
+          </div>
+          <div class="tower-name">冰霜塔</div>
+          <div class="element-badge water"><i class="fas fa-tint"></i> 水</div>
+          <div class="tower-expires">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Fusion Result Modal -->
+  <div class="fusion-result" id="fusionResult">
+    <div class="result-container">
+      <div class="result-title">融合成功!</div>
+      <div class="result-tower">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="successGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e90ff" />
+              <stop offset="100%" stop-color="#0077ea" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          <circle cx="100" cy="100" r="90" fill="none" stroke="url(#successGradient)" stroke-width="3" />
+          <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#successGradient)" />
+          <circle cx="100" cy="60" r="25" fill="#4eabff" filter="url(#glow)" />
+          <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" filter="url(#glow)" />
+          <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+        </svg>
+      </div>
+      <div class="result-info">获得 Tier 2 冰霜守护塔</div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-value">75</div>
+          <div class="result-stat-label">攻击</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value">40%</div>
+          <div class="result-stat-label">减速</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value">85</div>
+          <div class="result-stat-label">范围</div>
+        </div>
+      </div>
+      <button class="result-button" onclick="closeFusionResult()">确定</button>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions.html" class="nav-item">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item active">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    let selectedSlot = null;
+    let selectedTowers = {};
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate the UI elements
+      animateUI();
+      
+      // Initialize the fusion button state
+      updateFusionButtonState();
+    });
+    
+    function animateUI() {
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate fusion area
+      gsap.from('.fusion-resources', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      gsap.from('.fusion-slots', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.4,
+        ease: 'power3.out'
+      });
+      
+      gsap.from('.fusion-button', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      gsap.from('.tower-details', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate available towers section
+      gsap.from('.section-title', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 1,
+        ease: 'power3.out'
+      });
+      
+      gsap.from('.filter-button', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 1.2,
+        ease: 'power3.out'
+      });
+      
+      gsap.from('.tower-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 1.4,
+        ease: 'power3.out'
+      });
+    }
+    
+    function selectSlot(slotNumber) {
+      // If a tower is already selected for the slot, clear it
+      if (selectedTowers[slotNumber]) {
+        document.getElementById(`tower${selectedTowers[slotNumber]}`).classList.remove('selected');
+        delete selectedTowers[slotNumber];
+        
+        const slot = document.getElementById(`slot${slotNumber}`);
+        slot.classList.remove('filled');
+        slot.querySelector('.fusion-tower').innerHTML = '<i class="fas fa-plus text-gray-500 text-2xl"></i>';
+        
+        updateFusionButtonState();
+        return;
+      }
+      
+      selectedSlot = slotNumber;
+    }
+    
+    function selectTower(towerNumber) {
+      if (!selectedSlot) return;
+      
+      // If this tower is already selected in another slot, remove it from there
+      for (const slot in selectedTowers) {
+        if (selectedTowers[slot] === towerNumber) {
+          document.getElementById(`slot${slot}`).classList.remove('filled');
+          document.getElementById(`slot${slot}`).querySelector('.fusion-tower').innerHTML = '<i class="fas fa-plus text-gray-500 text-2xl"></i>';
+          delete selectedTowers[slot];
+        }
+      }
+      
+      // Select the tower for the current slot
+      selectedTowers[selectedSlot] = towerNumber;
+      
+      // Update the UI
+      document.getElementById(`tower${towerNumber}`).classList.add('selected');
+      
+      const towerElement = document.getElementById(`tower${towerNumber}`);
+      const towerIcon = towerElement.querySelector('.tower-icon').innerHTML;
+      
+      const slot = document.getElementById(`slot${selectedSlot}`);
+      slot.classList.add('filled');
+      slot.querySelector('.fusion-tower').innerHTML = towerIcon;
+      
+      // Reset the selected slot
+      selectedSlot = null;
+      
+      // Update fusion button state
+      updateFusionButtonState();
+    }
+    
+    function updateFusionButtonState() {
+      const fusionButton = document.getElementById('fusionButton');
+      if (selectedTowers[1] && selectedTowers[2]) {
+        fusionButton.classList.add('active');
+      } else {
+        fusionButton.classList.remove('active');
+      }
+    }
+    
+    function startFusion() {
+      if (!selectedTowers[1] || !selectedTowers[2]) return;
+      
+      // Animate the fusion process
+      const slot1 = document.getElementById('slot1');
+      const slot2 = document.getElementById('slot2');
+      
+      // Create a timeline for fusion animation
+      const fusionTimeline = gsap.timeline();
+      
+      // Step 1: Move towers towards each other
+      fusionTimeline.to([slot1, slot2], {
+        x: (index) => index === 0 ? 30 : -30,
+        duration: 0.5,
+        ease: 'power2.inOut'
+      });
+      
+      // Step 2: Scale up and fade out slightly
+      fusionTimeline.to([slot1, slot2], {
+        scale: 1.2,
+        opacity: 0.8,
+        duration: 0.3,
+        ease: 'power2.in'
+      });
+      
+      // Step 3: Flash effect
+      fusionTimeline.to('.fusion-area', {
+        backgroundColor: 'rgba(255, 215, 0, 0.1)',
+        duration: 0.2,
+        ease: 'power2.in',
+        yoyo: true,
+        repeat: 2
+      }, '-=0.2');
+      
+      // Step 4: Hide the slots
+      fusionTimeline.to([slot1, slot2], {
+        scale: 0,
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.in'
+      });
+      
+      // Step 5: Show the result
+      fusionTimeline.call(() => {
+        showFusionResult();
+      });
+      
+      // Step 6: Reset the slots
+      fusionTimeline.to([slot1, slot2], {
+        x: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: 'power2.out',
+        delay: 0.5
+      });
+    }
+    
+    function showFusionResult() {
+      const fusionResult = document.getElementById('fusionResult');
+      
+      // Show the fusion result
+      gsap.to(fusionResult, {
+        opacity: 1,
+        duration: 0.5,
+        ease: 'power2.out',
+        onStart: function() {
+          fusionResult.style.pointerEvents = 'auto';
+        }
+      });
+      
+      // Animate the result tower
+      gsap.from('.result-tower svg', {
+        rotation: 360,
+        scale: 0,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'elastic.out(1, 0.5)',
+        delay: 0.3
+      });
+    }
+    
+    function closeFusionResult() {
+      const fusionResult = document.getElementById('fusionResult');
+      
+      // Hide the fusion result
+      gsap.to(fusionResult, {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.in',
+        onComplete: function() {
+          fusionResult.style.pointerEvents = 'none';
+          resetFusionSlots();
+        }
+      });
+    }
+    
+    function resetFusionSlots() {
+      // Clear the selected towers
+      for (const slot in selectedTowers) {
+        if (selectedTowers[slot]) {
+          document.getElementById(`tower${selectedTowers[slot]}`).classList.remove('selected');
+        }
+      }
+      
+      // Clear the slots
+      selectedTowers = {};
+      
+      const slot1 = document.getElementById('slot1');
+      const slot2 = document.getElementById('slot2');
+      
+      slot1.classList.remove('filled');
+      slot2.classList.remove('filled');
+      
+      slot1.querySelector('.fusion-tower').innerHTML = '<i class="fas fa-plus text-gray-500 text-2xl"></i>';
+      slot2.querySelector('.fusion-tower').innerHTML = '<i class="fas fa-plus text-gray-500 text-2xl"></i>';
+      
+      // Update fusion button state
+      updateFusionButtonState();
+    }
+    
+    function filterTowers(type) {
+      // Update active filter button
+      const filterButtons = document.querySelectorAll('.filter-button');
+      filterButtons.forEach(button => button.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      
+      // Filter towers
+      const towerCards = document.querySelectorAll('.tower-card');
+      
+      if (type === 'all') {
+        towerCards.forEach(card => card.style.display = 'flex');
+      } else {
+        towerCards.forEach(card => {
+          const elementBadge = card.querySelector('.element-badge');
+          if (elementBadge.classList.contains(type)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

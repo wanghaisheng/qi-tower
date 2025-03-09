@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每日健康问答</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .questions-container {
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 83px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .daily-progress {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      margin: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .progress-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .progress-percentage {
+      font-size: 18px;
+      font-weight: bold;
+      color: #f5d020;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      width: 35%;
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      border-radius: 4px;
+    }
+    
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #a0aec0;
+    }
+    
+    .section-title {
+      padding: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 25px 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 0 20px;
+      margin-bottom: 20px;
+    }
+    
+    .category-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .category-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(245, 208, 32, 0.3);
+    }
+    
+    .category-header {
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .category-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .gold-icon {
+      background: linear-gradient(135deg, #ffd700, #e6c200);
+      color: #0d1117;
+    }
+    
+    .wood-icon {
+      background: linear-gradient(135deg, #00a86b, #008f5b);
+      color: #fff;
+    }
+    
+    .water-icon {
+      background: linear-gradient(135deg, #1e90ff, #0077ea);
+      color: #fff;
+    }
+    
+    .fire-icon {
+      background: linear-gradient(135deg, #ff4500, #e53e00);
+      color: #fff;
+    }
+    
+    .earth-icon {
+      background: linear-gradient(135deg, #cd853f, #b07339);
+      color: #fff;
+    }
+    
+    .category-info {
+      flex: 1;
+    }
+    
+    .category-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+    
+    .category-desc {
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .category-content {
+      padding: 15px;
+    }
+    
+    .question-count {
+      font-size: 14px;
+      color: #a0aec0;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .question-count span {
+      color: #f5d020;
+      font-weight: bold;
+    }
+    
+    .reward-preview {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    
+    .reward-label {
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .reward-towers {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .reward-tower {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .category-action {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      font-size: 14px;
+      font-weight: bold;
+      width: 100%;
+      text-align: center;
+    }
+    
+    .premium-banner {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    
+    .locked-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .locked-icon {
+      font-size: 28px;
+      color: #f5d020;
+    }
+    
+    .locked-text {
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      padding: 0 20px;
+    }
+    
+    .unlock-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="questions-container">
+    <div class="header">
+      <h1>每日健康问答</h1>
+      <a href="#" id="infoButton">
+        <i class="fas fa-info-circle text-2xl text-gray-400"></i>
+      </a>
+    </div>
+    
+    <div class="daily-progress">
+      <div class="progress-header">
+        <div class="progress-title">今日进度</div>
+        <div class="progress-percentage">35%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-stats">
+        <div>已完成: 63/180</div>
+        <div>剩余问题: 117</div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      常规五行健康问答
+    </div>
+    
+    <div class="categories-grid">
+      <a href="daily_questions.html" class="category-card">
+        <div class="category-header">
+          <div class="category-icon gold-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <div class="category-info">
+            <div class="category-name">金系问答</div>
+            <div class="category-desc">肺部健康相关问题</div>
+          </div>
+        </div>
+        <div class="category-content">
+          <div class="question-count">
+            进度: <span>12/36</span>
+          </div>
+          <div class="reward-preview">
+            <div class="reward-label">奖励:</div>
+            <div class="reward-towers">
+              <div class="reward-tower">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ffd700" />
+                      <stop offset="100%" stop-color="#e6c200" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#goldGradient)" />
+                  <circle cx="100" cy="60" r="25" fill="#ffdf33" />
+                  <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ffdf33" />
+                  <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#b39700" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="category-action">继续答题</button>
+        </div>
+      </a>
+      
+      <a href="daily_questions.html" class="category-card">
+        <div class="category-header">
+          <div class="category-icon wood-icon">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <div class="category-info">
+            <div class="category-name">木系问答</div>
+            <div class="category-desc">肝脏健康相关问题</div>
+          </div>
+        </div>
+        <div class="category-content">
+          <div class="question-count">
+            进度: <span>20/36</span>
+          </div>
+          <div class="reward-preview">
+            <div class="reward-label">奖励:</div>
+            <div class="reward-towers">
+              <div class="reward-tower">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00a86b" />
+                      <stop offset="100%" stop-color="#008f5b" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#woodGradient)" />
+                  <circle cx="100" cy="60" r="25" fill="#00c47f" />
+                  <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#00c47f" />
+                  <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#00734a" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="category-action">继续答题</button>
+        </div>
+      </a>
+      
+      <a href="daily_questions.html" class="category-card">
+        <div class="category-header">
+          <div class="category-icon water-icon">
+            <i class="fas fa-tint"></i>
+          </div>
+          <div class="category-info">
+            <div class="category-name">水系问答</div>
+            <div class="category-desc">肾脏健康相关问题</div>
+          </div>
+        </div>
+        <div class="category-content">
+          <div class="question-count">
+            进度: <span>15/36</span>
+          </div>
+          <div class="reward-preview">
+            <div class="reward-label">奖励:</div>
+            <div class="reward-towers">
+              <div class="reward-tower">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#1e90ff" />
+                      <stop offset="100%" stop-color="#0077ea" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#waterGradient)" />
+                  <circle cx="100" cy="60" r="25" fill="#4eabff" />
+                  <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" />
+                  <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="category-action">继续答题</button>
+        </div>
+      </a>
+      
+      <a href="daily_questions.html" class="category-card">
+        <div class="category-header">
+          <div class="category-icon fire-icon">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div class="category-info">
+            <div class="category-name">火系问答</div>
+            <div class="category-desc">心脏健康相关问题</div>
+          </div>
+        </div>
+        <div class="category-content">
+          <div class="question-count">
+            进度: <span>8/36</span>
+          </div>
+          <div class="reward-preview">
+            <div class="reward-label">奖励:</div>
+            <div class="reward-towers">
+              <div class="reward-tower">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="fireGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ff4500" />
+                      <stop offset="100%" stop-color="#e53e00" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#fireGradient)" />
+                  <circle cx="100" cy="60" r="25" fill="#ff6433" />
+                  <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ff6433" />
+                  <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#cc3700" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="category-action">继续答题</button>
+        </div>
+      </a>
+      
+      <a href="daily_questions.html" class="category-card">
+        <div class="category-header">
+          <div class="category-icon earth-icon">
+            <i class="fas fa-mountain"></i>
+          </div>
+          <div class="category-info">
+            <div class="category-name">土系问答</div>
+            <div class="category-desc">脾胃健康相关问题</div>
+          </div>
+        </div>
+        <div class="category-content">
+          <div class="question-count">
+            进度: <span>8/36</span>
+          </div>
+          <div class="reward-preview">
+            <div class="reward-label">奖励:</div>
+            <div class="reward-towers">
+              <div class="reward-tower">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#cd853f" />
+                      <stop offset="100%" stop-color="#b07339" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#earthGradient)" />
+                  <circle cx="100" cy="60" r="25" fill="#d79955" />
+                  <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#d79955" />
+                  <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#966035" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="category-action">继续答题</button>
+        </div>
+      </a>
+    </div>
+    
+    <div class="section-title">
+      特殊问答
+    </div>
+    
+    <div class="categories-grid">
+      <div class="category-card" style="position: relative;">
+        <div class="category-header">
+          <div class="category-icon special-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="category-info">
+            <div class="category-name">
+              春季活动问答
+              <span class="special-badge">限时</span>
+            </div>
+            <div class="category-desc">春季特别健康问题</div>
+          </div>
+        </div>
+        <div class="category-content">
+          <div class="question-count">
+            进度: <span>0/24</span>
+          </div>
+          <div class="reward-preview">
+            <div class="reward-label">特殊奖励:</div>
+            <div class="reward-towers">
+              <div class="reward-tower">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="specialGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#9932cc" />
+                      <stop offset="100%" stop-color="#8a2be2" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#specialGradient)" />
+                  <circle cx="100" cy="60" r="25" fill="#b15ee3" />
+                  <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#b15ee3" />
+                  <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#7126b5" />
+                  <text x="100" y="60" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="18" font-weight="bold">Tier4</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="category-action">开始答题</button>
+        </div>
+      </div>
+      
+      <div class="category-card" style="position: relative;">
+        <div class="premium-banner">会员专享</div>
+        <div class="category-header">
+          <div class="category-icon premium-icon">
+            <i class="fas fa-crown"></i>
+          </div>
+          <div class="category-info">
+            <div class="category-name">高级专业问答</div>
+            <div class="category-desc">获取高级塔奖励</div>
+          </div>
+        </div>
+        <div class="category-content">
+          <div class="question-count">
+            进度: <span>0/24</span>
+          </div>
+          <div class="reward-preview">
+            <div class="reward-label">高级奖励:</div>
+            <div class="reward-towers">
+              <div class="reward-tower">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="premiumGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#1e90ff" />
+                      <stop offset="100%" stop-color="#00bfff" />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="2.5" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#premiumGradient)" />
+                  <circle cx="100" cy="60" r="25" fill="#4eabff" filter="url(#glow)" />
+                  <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" filter="url(#glow)" />
+                  <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+                  <text x="100" y="60" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="18" font-weight="bold">Tier4</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="category-action">开始答题</button>
+        </div>
+        <div class="locked-overlay">
+          <div class="locked-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <div class="locked-text">会员专享高级问答，获取稀有高级防御塔</div>
+          <a href="membership.html" class="unlock-button">
+            升级会员解锁 <i class="fas fa-crown ml-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions_list.html" class="nav-item active">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate progress bar
+      gsap.from('.daily-progress', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate section titles
+      gsap.from('.section-title', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        delay: 0.4,
+        ease: 'power3.out'
+      });
+      
+      // Animate cards
+      gsap.from('.category-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      // Animate locked overlay
+      gsap.from('.locked-overlay', {
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.8,
+        delay: 1.2,
+        ease: 'power3.out'
+      });
+    });
+  </script>
+</body>
+</html>

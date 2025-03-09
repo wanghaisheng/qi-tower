@@ -1,132 +1,1449 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="A mobile simulator designed to demonstrate mobile interface design.">
-  <meta name="keywords" content="mobile, simulator, mobile design, mobile app">
-  <meta name="author" content="Your Name or Company">
-  <meta http-equiv="Content-Language" content="en">
-
-  <!-- Canonical Link -->
-  <link rel="canonical" href="https://www.yourwebsite.com/pc-simulator" />
-
-  <!-- Open Graph for Social Media -->
-  <meta property="og:title" content="PC Simulator">
-  <meta property="og:description" content="A mobile simulator designed to demonstrate mobile interface design.">
-  <meta property="og:image" content="https://www.yourwebsite.com/pc-simulator-image.jpg">
-  <meta property="og:url" content="https://www.yourwebsite.com/pc-simulator">
-  <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PC Simulator">
-  <meta name="twitter:description" content="A mobile simulator designed to demonstrate mobile interface design.">
-  <meta name="twitter:image" content="https://www.yourwebsite.com/pc-simulator-image.jpg">
-  <meta name="twitter:creator" content="@yourtwitterhandle">
-
-  <!-- Favicon -->
-  <link rel="icon" href="https://www.yourwebsite.com/favicon.ico" type="image/x-icon">
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-Y"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-    gtag('config', 'UA-XXXXX-Y');
-  </script>
-
-  <!-- Microsoft Clarity -->
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y) {
-      window.clarity=window.clarity||function(){(clarity.q=clarity.q||[]).push(arguments)};
-      clarity('set', 'anonymizeIP', true);
-      i=l.createElement('script');i.async=1;i.src=r;i.type='text/javascript';
-      t=l.getElementsByTagName('script')[0];t.parentNode.insertBefore(i,t);
-    })(document,window,'script','https://www.clarity.ms/tag/XXXXXX');
-  </script>
-
-  <title>PC Simulator</title>
-
+  <title>五行塔防 - 结合中医五行的健康管理塔防游戏</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <style>
-    /* Global Styles */
+    /* General Styles */
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
+      background-color: #0d1117;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      overflow-x: hidden;
     }
-
-    .mobile-container {
-      width: 360px;
-      height: 640px;
-      border: 16px solid black;
-      border-radius: 16px;
-      background-color: #fff;
+    
+    .text-gradient {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(245, 56, 3, 0.3);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(245, 208, 32, 0.3);
+    }
+    
+    .element-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 20px;
+      font-size: 14px;
+      padding: 8px 16px;
+      margin: 5px;
+    }
+    
+    .gold {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+    }
+    
+    .wood {
+      background: rgba(0, 168, 107, 0.2);
+      color: #00a86b;
+    }
+    
+    .water {
+      background: rgba(30, 144, 255, 0.2);
+      color: #1e90ff;
+    }
+    
+    .fire {
+      background: rgba(255, 69, 0, 0.2);
+      color: #ff4500;
+    }
+    
+    .earth {
+      background: rgba(205, 133, 63, 0.2);
+      color: #cd853f;
+    }
+    
+    .phone-frame {
+      width: 300px;
+      height: 600px;
+      background-color: #000;
+      border-radius: 40px;
+      overflow: hidden;
       position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      margin: 0 auto;
+      border: 8px solid #111;
+    }
+    
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 30px;
+      position: relative;
+    }
+    
+    .floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .floating-element {
+      position: absolute;
+      opacity: 0.2;
+      font-size: 40px;
+      font-weight: bold;
+    }
+    
+    .testimonial-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      margin: 20px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .testimonial-card:hover {
+      transform: scale(1.03);
+      border-color: rgba(245, 208, 32, 0.3);
+    }
+    
+    .member-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      margin: 20px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .member-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(245, 208, 32, 0.3);
+    }
+    
+    .member-card.popular {
+      background: linear-gradient(135deg, rgba(245, 208, 32, 0.15), rgba(245, 56, 3, 0.15));
+      border-color: rgba(245, 208, 32, 0.5);
+    }
+    
+    .popular-tag {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 10px;
+      position: absolute;
+      top: -10px;
+      right: 20px;
+    }
+    
+    .faq-item {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .faq-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .gallery-container {
       display: flex;
-      justify-content: center;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 20px 0;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    .gallery-container::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .screen-preview {
+      flex: 0 0 auto;
+      width: 250px;
+      height: 500px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .screen-preview:hover {
+      transform: scale(1.05);
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(5deg);
+      }
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+    }
+    
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .prototype-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    
+    .scrolling-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding: 20px 0;
+    }
+    
+    .scrolling-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+    
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    /* New Styles */
+    .hero-gradient {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f172a 100%);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      background: rgba(245, 208, 32, 0.1);
+      border: 1px solid rgba(245, 208, 32, 0.3);
+      color: #f5d020;
     }
-
-    .content {
-      font-size: 1.2rem;
-      color: #333;
+    
+    .benefits-section {
+      background: linear-gradient(135deg, #0d1117 0%, #1a1a2e 100%);
     }
-
-    /* Adjustments for PC */
-    @media (min-width: 768px) {
-      .mobile-container {
-        width: 600px;
-        height: 1000px;
-      }
-
-      .content {
-        font-size: 1.5rem;
-      }
+    
+    .benefit-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
     }
-
-    @media (min-width: 1024px) {
-      .mobile-container {
-        width: 800px;
-        height: 1400px;
-      }
-
-      .content {
-        font-size: 1.8rem;
-      }
+    
+    .benefit-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(245, 208, 32, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
-
-    /* Additional responsiveness for larger screens */
-    @media (min-width: 1200px) {
-      body {
-        justify-content: flex-start;
-      }
-
-      .mobile-container {
-        margin-top: 50px;
-      }
+    
+    .game-mechanics {
+      background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 100%);
+    }
+    
+    .mechanic-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 25px;
+      height: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .mechanic-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(245, 208, 32, 0.2);
+    }
+    
+    .download-gradient {
+      background: linear-gradient(135deg, #1a1a2e 0%, #0f172a 100%);
+    }
+    
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 20px;
+      color: #000;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .app-badge:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+    }
+    
+    .countdown-container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 30px;
+    }
+    
+    .countdown-item {
+      background: rgba(245, 208, 32, 0.1);
+      border-radius: 12px;
+      padding: 15px 20px;
+      text-align: center;
+      border: 1px solid rgba(245, 208, 32, 0.2);
+    }
+    
+    .countdown-number {
+      font-size: 30px;
+      font-weight: bold;
+      color: #f5d020;
+    }
+    
+    .countdown-label {
+      font-size: 14px;
+      color: #a0aec0;
+    }
+    
+    .newsletter-form {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .input-field {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px 20px;
+      color: #fff;
+      width: 100%;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #f5d020;
+    }
+    
+    .feature-graphic {
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
   </style>
 </head>
-
 <body>
-  <div class="mobile-container">
-    <div class="content">
-      <p>Mobile Simulator Screen</p>
-      <p>PC Version: Adjusted for larger screens.</p>
+  <!-- Hero Section -->
+  <header class="relative overflow-hidden hero-gradient py-16 md:py-24">
+    <div class="floating-elements" id="heroElements">
+      <!-- Will be populated by JS -->
     </div>
-  </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+      <nav class="flex justify-between items-center mb-16">
+        <div class="flex items-center">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3">
+            <i class="fas fa-chess-rook text-white text-xl"></i>
+          </div>
+          <span class="text-xl font-bold">五行塔防</span>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#features" class="text-gray-300 hover:text-white transition">功能特点</a>
+          <a href="#gameplay" class="text-gray-300 hover:text-white transition">游戏玩法</a>
+          <a href="#membership" class="text-gray-300 hover:text-white transition">会员方案</a>
+          <a href="#prototype" class="text-gray-300 hover:text-white transition">原型体验</a>
+          <a href="#download" class="px-6 py-2 rounded-full btn-primary font-semibold">下载游戏</a>
+        </div>
+        
+        <div class="md:hidden">
+          <button class="text-white">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-12 md:mb-0">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <span class="text-gradient">五行塔防</span><br>
+            健康管理与塔防策略的完美结合
+          </h1>
+          
+          <p class="text-gray-300 text-lg mb-8">
+            回答问题，获取五行塔，发现自己的健康状况，运用相生相克原理打造最强防线。游戏化的健康管理，让关注健康变得有趣而简单。
+          </p>
+          
+          <div class="flex flex-wrap gap-4">
+            <a href="#download" class="px-8 py-3 rounded-full btn-primary font-semibold text-lg">
+              免费下载
+            </a>
+            <a href="#prototype" class="px-8 py-3 rounded-full btn-secondary font-semibold text-lg">
+              在线体验
+            </a>
+          </div>
+          
+          <div class="flex items-center gap-2 mt-8">
+            <div class="flex -space-x-2">
+              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-10 h-10 rounded-full border-2 border-gray-800">
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-10 h-10 rounded-full border-2 border-gray-800">
+              <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="w-10 h-10 rounded-full border-2 border-gray-800">
+              <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="w-10 h-10 rounded-full border-2 border-gray-800">
+              <div class="w-10 h-10 rounded-full bg-gray-800 border-2 border-gray-800 flex items-center justify-center text-xs">+2k</div>
+            </div>
+            <span class="text-gray-400">已有超过2000人加入</span>
+          </div>
+          
+          <!-- New: App Launch Countdown -->
+          <div class="mt-12">
+            <h3 class="text-xl font-bold mb-3">正式版即将发布</h3>
+            <div class="flex gap-4">
+              <div class="countdown-item">
+                <div class="countdown-number">15</div>
+                <div class="countdown-label">天</div>
+              </div>
+              <div class="countdown-item">
+                <div class="countdown-number">08</div>
+                <div class="countdown-label">时</div>
+              </div>
+              <div class="countdown-item">
+                <div class="countdown-number">45</div>
+                <div class="countdown-label">分</div>
+              </div>
+              <div class="countdown-item">
+                <div class="countdown-number">33</div>
+                <div class="countdown-label">秒</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="md:w-1/2 flex justify-center">
+          <div class="phone-frame animate-float">
+            <div class="phone-screen">
+              <iframe src="screens/welcome.html" title="欢迎界面"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- New: Key Benefits Section -->
+  <section class="benefits-section py-20">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-4">
+        <span class="text-gradient">五行塔防的独特优势</span>
+      </h2>
+      <p class="text-gray-300 text-center mb-16 max-w-3xl mx-auto">
+        将游戏乐趣与健康管理完美结合，打造一个兼具娱乐性和实用性的创新应用
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="benefit-card">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <h3 class="text-xl font-bold text-center mb-4">游戏化健康管理</h3>
+          <p class="text-gray-400 text-center">
+            通过有趣的塔防玩法，激励用户持续关注自身健康状况，让健康管理变得轻松有趣
+          </p>
+        </div>
+        
+        <div class="benefit-card">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h3 class="text-xl font-bold text-center mb-4">中医五行知识普及</h3>
+          <p class="text-gray-400 text-center">
+            寓教于乐，帮助用户了解金木水火土与人体五脏（肺、肝、肾、心、脾）的关联，提高健康意识
+          </p>
+        </div>
+        
+        <div class="benefit-card">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-chess-knight"></i>
+          </div>
+          <h3 class="text-xl font-bold text-center mb-4">策略性塔防玩法</h3>
+          <p class="text-gray-400 text-center">
+            运用五行相生相克原理，合理布置防御塔，体验丰富的策略性玩法，每天都有新的挑战
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Five Elements Intro -->
+  <section class="py-16 bg-gradient-to-b from-gray-800 to-gray-900">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-16">
+        <span class="text-gradient">五行元素</span>
+        游戏核心
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div class="feature-card rounded-xl p-6 text-center">
+          <div class="w-16 h-16 rounded-full gold mx-auto mb-4 flex items-center justify-center">
+            <i class="fas fa-coins text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2">金系塔</h3>
+          <p class="text-gray-400">对应肺，高攻击力的防御塔，能有效拦截敌人</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-6 text-center">
+          <div class="w-16 h-16 rounded-full wood mx-auto mb-4 flex items-center justify-center">
+            <i class="fas fa-leaf text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2">木系塔</h3>
+          <p class="text-gray-400">对应肝，治愈型塔，能为周围友军提供恢复效果</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-6 text-center">
+          <div class="w-16 h-16 rounded-full water mx-auto mb-4 flex items-center justify-center">
+            <i class="fas fa-tint text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2">水系塔</h3>
+          <p class="text-gray-400">对应肾，控制型塔，能减缓敌人的移动速度</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-6 text-center">
+          <div class="w-16 h-16 rounded-full fire mx-auto mb-4 flex items-center justify-center">
+            <i class="fas fa-fire text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2">火系塔</h3>
+          <p class="text-gray-400">对应心，爆发型塔，造成大范围高伤害</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-6 text-center">
+          <div class="w-16 h-16 rounded-full earth mx-auto mb-4 flex items-center justify-center">
+            <i class="fas fa-mountain text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2">土系塔</h3>
+          <p class="text-gray-400">对应脾，防御型塔，增强友军的防御能力</p>
+        </div>
+      </div>
+      
+      <div class="mt-16 text-center">
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto mb-8">
+          五行相生相克，决定你的战略布局。木生火，火生土，土生金，金生水，水生木。同时，金克木，木克土，土克水，水克火，火克金。
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-3">
+          <span class="element-badge gold"><i class="fas fa-coins mr-2"></i> 金</span>
+          <span class="element-badge wood"><i class="fas fa-leaf mr-2"></i> 木</span>
+          <span class="element-badge water"><i class="fas fa-tint mr-2"></i> 水</span>
+          <span class="element-badge fire"><i class="fas fa-fire mr-2"></i> 火</span>
+          <span class="element-badge earth"><i class="fas fa-mountain mr-2"></i> 土</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Game Mechanics Section (NEW) -->
+  <section class="game-mechanics py-20">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-4">
+        <span class="text-gradient">游戏机制</span>
+      </h2>
+      <p class="text-gray-300 text-center mb-16 max-w-3xl mx-auto">
+        结合五行相生相克原理、塔防策略与健康管理的独特玩法体验
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="mechanic-card">
+          <div class="text-blue-400 text-4xl mb-4">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">每日健康问答</h3>
+          <p class="text-gray-400">
+            回答与身体五脏相关的健康问题，获取不同种类的五行防御塔和增益卡片，持续关注自身健康
+          </p>
+        </div>
+        
+        <div class="mechanic-card">
+          <div class="text-green-400 text-4xl mb-4">
+            <i class="fas fa-sync-alt"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">塔合成系统</h3>
+          <p class="text-gray-400">
+            将低级塔合成为高级塔，每个塔有Tier 1-4等级和1-3星评级，提升战斗力应对更强大的敌人
+          </p>
+        </div>
+        
+        <div class="mechanic-card">
+          <div class="text-yellow-400 text-4xl mb-4">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">卡片系统</h3>
+          <p class="text-gray-400">
+            使用增益和减益卡片，根据五行相生相克原理强化自己的塔或削弱敌人，增加战略深度
+          </p>
+        </div>
+        
+        <div class="mechanic-card">
+          <div class="text-red-400 text-4xl mb-4">
+            <i class="fas fa-chess-board"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">策略塔防玩法</h3>
+          <p class="text-gray-400">
+            合理布置不同属性的塔，应对变化多样的敌人，挑战不同难度的关卡，获取丰厚奖励
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Features Section -->
+  <section id="features" class="py-16 bg-gray-900">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-16">
+        <span class="text-gradient">游戏特点</span>
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="feature-card rounded-xl p-8">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mb-6">
+            <i class="fas fa-question-circle text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">每日健康问答</h3>
+          <p class="text-gray-400">回答180多个关于身体健康的问题，获取不同属性的防御塔。问题按五行分类，对应人体不同部位。</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-8">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mb-6">
+            <i class="fas fa-chess-rook text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">塔防策略</h3>
+          <p class="text-gray-400">运用五行相生相克原理，合理布置不同属性的防御塔。每个塔有独特的能力，星级系统让塔能力不断提升。</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-8">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mb-6">
+            <i class="fas fa-layer-group text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">卡片系统</h3>
+          <p class="text-gray-400">使用增益和减益卡片，强化自己的塔或削弱敌人。卡片与塔的五行属性相生相克关系会影响卡片效果的强度。</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-8">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mb-6">
+            <i class="fas fa-sync-alt text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">塔融合系统</h3>
+          <p class="text-gray-400">将低级塔融合成更强大的高级塔。融合系统让你的塔防阵容不断进化，应对更强大的敌人。</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-8">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mb-6">
+            <i class="fas fa-user-friends text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">社交系统</h3>
+          <p class="text-gray-400">与好友分享战斗成果，组建战队共同挑战，在排行榜上争夺最高分数。社交互动让游戏更有趣。</p>
+        </div>
+        
+        <div class="feature-card rounded-xl p-8">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mb-6">
+            <i class="fas fa-crown text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">会员特权</h3>
+          <p class="text-gray-400">会员可使用延期卡，将当日获得的塔延续使用。高级会员享有专属塔和卡片，增强游戏体验。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Gameplay Section -->
+  <section id="gameplay" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-16">
+        <span class="text-gradient">游戏玩法</span>
+      </h2>
+      
+      <div class="flex flex-col lg:flex-row items-center gap-12 mb-20">
+        <div class="lg:w-1/2">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="screens/daily_questions_list.html" title="每日问答"></iframe>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:w-1/2">
+          <h3 class="text-2xl font-bold mb-6">每日健康问答</h3>
+          <p class="text-gray-300 mb-6">
+            每天回答健康相关问题，了解自己的身体状况。问题分为五大类，对应五行元素和人体五脏。
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">180多个精心设计的健康问题，覆盖五脏六腑</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">每个问题都与五行元素相关联，获得对应属性的防御塔</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">特殊问答活动，获取限时稀有塔和增益卡片</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="flex flex-col lg:flex-row-reverse items-center gap-12 mb-20">
+        <div class="lg:w-1/2">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="screens/tower_collection.html" title="塔收集"></iframe>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:w-1/2">
+          <h3 class="text-2xl font-bold mb-6">收集和升级防御塔</h3>
+          <p class="text-gray-300 mb-6">
+            通过答题获得不同属性的防御塔，构建你的塔防阵容。塔分为四个等级（Tier 1-4）和三个星级（1-3星）。
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">收集五行属性的各种塔，每种塔具有独特的能力</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">塔融合系统让低级塔升级为高级塔，提升战斗力</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">会员可使用延期卡，延长塔的使用期限</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        <div class="lg:w-1/2">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="screens/battle.html" title="战斗界面"></iframe>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:w-1/2">
+          <h3 class="text-2xl font-bold mb-6">战略性战斗</h3>
+          <p class="text-gray-300 mb-6">
+            根据五行相生相克原理布置防御塔，应对不同属性的敌人。战斗中需要合理分配资源，升级关键塔，使用增益和减益卡片。
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">多样化的敌人类型，需要针对性布置防御</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">使用卡片系统增强塔的能力或削弱敌人</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">战胜敌人获得资源和奖励，解锁更高级的塔</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Gallery Section -->
+  <section class="py-16 bg-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-10">
+        <span class="text-gradient">游戏界面展示</span>
+      </h2>
+      
+      <div class="scrolling-wrapper pb-8">
+        <div class="inline-block screen-preview mr-4">
+          <iframe src="screens/welcome.html" title="Welcome Screen" class="w-full h-full object-cover"></iframe>
+        </div>
+        <div class="inline-block screen-preview mr-4">
+          <iframe src="screens/daily_questions.html" title="Daily Questions" class="w-full h-full object-cover"></iframe>
+        </div>
+        <div class="inline-block screen-preview mr-4">
+          <iframe src="screens/tower_collection.html" title="Tower Collection" class="w-full h-full object-cover"></iframe>
+        </div>
+        <div class="inline-block screen-preview mr-4">
+          <iframe src="screens/tower_fusion.html" title="Tower Fusion" class="w-full h-full object-cover"></iframe>
+        </div>
+        <div class="inline-block screen-preview mr-4">
+          <iframe src="screens/battle.html" title="Battle" class="w-full h-full object-cover"></iframe>
+        </div>
+        <div class="inline-block screen-preview">
+          <iframe src="screens/results.html" title="Results" class="w-full h-full object-cover"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Testimonial Section with New Design -->
+  <section class="py-16 bg-gradient-to-b from-gray-800 to-gray-900">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-6">
+        <span class="text-gradient">用户评价</span>
+      </h2>
+      <p class="text-gray-300 text-center mb-12 max-w-3xl mx-auto">
+        听听用户们是如何评价"五行塔防"的体验
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="testimonial-card">
+          <div class="flex items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="User" class="w-14 h-14 rounded-full mr-4">
+            <div>
+              <h4 class="font-bold">张小明</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-300">
+            "这款游戏太棒了！每天回答健康问题的同时还能玩塔防，让我在不知不觉中更加关注自己的健康状况。五行系统的设计很有深度，让塔防游戏更有策略性。"
+          </p>
+        </div>
+        
+        <div class="testimonial-card">
+          <div class="flex items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="User" class="w-14 h-14 rounded-full mr-4">
+            <div>
+              <h4 class="font-bold">李华</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-300">
+            "作为一名中医爱好者，我非常喜欢这款结合五行理念的游戏。游戏中的五行相生相克设计非常符合传统理论，让我在娱乐的同时学到了很多关于健康的知识。"
+          </p>
+        </div>
+        
+        <div class="testimonial-card">
+          <div class="flex items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/women/56.jpg" alt="User" class="w-14 h-14 rounded-full mr-4">
+            <div>
+              <h4 class="font-bold">王芳</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-300">
+            "一直想找一款能够帮助我关注健康的游戏，这款游戏完美满足了我的需求。塔融合系统非常有意思，让人有不断升级的动力。每天都期待回答新的问题，解锁新的塔！"
+          </p>
+        </div>
+      </div>
+      
+      <div class="text-center mt-16">
+        <div class="inline-block bg-gradient-to-r from-yellow-400 to-red-500 p-px rounded-xl">
+          <div class="bg-gray-900 rounded-xl px-8 py-5">
+            <p class="text-xl mb-4">平均评分</p>
+            <div class="flex justify-center text-yellow-400 text-2xl mb-2">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+            </div>
+            <p class="text-3xl font-bold text-gradient">4.8 / 5.0</p>
+            <p class="text-gray-400 mt-2">基于2,458个用户评价</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Membership Section -->
+  <section id="membership" class="py-16 bg-gray-900">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-6">
+        <span class="text-gradient">会员方案</span>
+      </h2>
+      <p class="text-gray-300 text-center mb-12 max-w-3xl mx-auto">
+        升级会员，解锁更多高级功能，提升游戏体验
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="member-card">
+          <h3 class="text-2xl font-bold mb-6">月度会员</h3>
+          <div class="text-4xl font-bold mb-6">
+            <span class="text-gradient">¥28</span>
+            <span class="text-gray-400 text-lg font-normal">/月</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">每天3张延期卡</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">每日额外5个塔抽取机会</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">获得专属皮肤</span>
+            </li>
+          </ul>
+          <button class="w-full py-3 rounded-full btn-secondary font-semibold">
+            立即订阅
+          </button>
+        </div>
+        
+        <div class="member-card popular relative">
+          <div class="popular-tag">最受欢迎</div>
+          <h3 class="text-2xl font-bold mb-6">季度会员</h3>
+          <div class="text-4xl font-bold mb-6">
+            <span class="text-gradient">¥68</span>
+            <span class="text-gray-400 text-lg font-normal">/季</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">每天5张延期卡</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">每日额外10个塔抽取机会</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">获得专属皮肤和特效</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">解锁高级卡片槽</span>
+            </li>
+          </ul>
+          <button class="w-full py-3 rounded-full btn-primary font-semibold">
+            立即订阅
+          </button>
+        </div>
+        
+        <div class="member-card">
+          <h3 class="text-2xl font-bold mb-6">年度会员</h3>
+          <div class="text-4xl font-bold mb-6">
+            <span class="text-gradient">¥198</span>
+            <span class="text-gray-400 text-lg font-normal">/年</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">无限延期卡</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">每日额外15个塔抽取机会</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">获得所有皮肤和特效</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">解锁高级卡片槽和合成功能</span>
+            </li>
+            <li class="flex items-start">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3 mt-1">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+              <span class="text-gray-300">每月专属礼包</span>
+            </li>
+          </ul>
+          <button class="w-full py-3 rounded-full btn-secondary font-semibold">
+            立即订阅
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Newsletter Section (NEW) -->
+  <section class="py-16 benefits-section">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-6">
+          <span class="text-gradient">获取最新消息</span>
+        </h2>
+        <p class="text-gray-300 text-center mb-8">
+          订阅我们的新闻通讯，获取游戏更新、优惠活动和独家内容
+        </p>
+        
+        <div class="newsletter-form">
+          <div class="flex flex-col md:flex-row gap-4 mb-4">
+            <input type="email" placeholder="您的邮箱地址" class="input-field md:flex-1">
+            <button class="btn-primary py-3 px-6 rounded-lg font-semibold">
+              立即订阅
+            </button>
+          </div>
+          <p class="text-gray-500 text-sm text-center">
+            我们尊重您的隐私，绝不会将您的信息分享给第三方
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Prototype Section -->
+  <section id="prototype" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-6">
+        <span class="text-gradient">原型体验</span>
+      </h2>
+      
+      <p class="text-center text-gray-300 max-w-3xl mx-auto mb-12">
+        浏览我们的游戏原型，体验五行塔防的核心功能。查看每个界面的设计和交互，了解游戏的玩法和特色。
+      </p>
+      
+      <div class="prototype-gallery">
+        <div class="mb-10">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="screens/welcome.html" title="欢迎界面"></iframe>
+            </div>
+          </div>
+          <p class="text-center text-gray-300 mt-4">欢迎界面</p>
+        </div>
+        
+        <div class="mb-10">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="screens/login.html" title="登录界面"></iframe>
+            </div>
+          </div>
+          <p class="text-center text-gray-300 mt-4">登录界面</p>
+        </div>
+        
+        <div class="mb-10">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="screens/home.html" title="主页"></iframe>
+            </div>
+          </div>
+          <p class="text-center text-gray-300 mt-4">主页</p>
+        </div>
+        
+        <div class="mb-10">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="screens/daily_questions_list.html" title="每日问答列表"></iframe>
+            </div>
+          </div>
+          <p class="text-center text-gray-300 mt-4">每日问答列表</p>
+        </div>
+      </div>
+      
+      <div class="text-center mt-8">
+        <a href="#" class="inline-block px-8 py-3 rounded-full btn-primary font-semibold text-lg">
+          查看更多界面
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- FAQ Section -->
+  <section class="py-16 bg-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-16">
+        <span class="text-gradient">常见问题</span>
+      </h2>
+      
+      <div class="max-w-3xl mx-auto">
+        <div class="faq-item py-6">
+          <h3 class="text-xl font-bold mb-3">每日获得的塔能保存多长时间？</h3>
+          <p class="text-gray-300">
+            免费用户每日获得的塔只能当天使用，第二天会自动失效。会员用户可以使用延期卡，将塔的使用期限延长至后续几天。高级会员可以获得更多的延期卡或无限延期特权。
+          </p>
+        </div>
+        
+        <div class="faq-item py-6">
+          <h3 class="text-xl font-bold mb-3">如何获得更高级别的塔？</h3>
+          <p class="text-gray-300">
+            有两种方法获得高级塔：通过答题随机获得不同等级的塔，或通过塔融合系统将低级塔合成为高级塔。塔融合系统的成功率受到多种因素影响，可以使用资源提升成功率。
+          </p>
+        </div>
+        
+        <div class="faq-item py-6">
+          <h3 class="text-xl font-bold mb-3">卡片系统如何影响战斗？</h3>
+          <p class="text-gray-300">
+            卡片系统分为增益卡和减益卡。增益卡可以提升自己的塔的能力，如增加攻击力、范围等。减益卡可以削弱敌人，如降低速度、攻击力等。卡片与塔的五行属性相生相克关系会影响卡片效果的强度。
+          </p>
+        </div>
+        
+        <div class="faq-item py-6">
+          <h3 class="text-xl font-bold mb-3">游戏中的五行相生相克关系是什么？</h3>
+          <p class="text-gray-300">
+            游戏中的五行相生相克关系遵循传统中医理论：木生火，火生土，土生金，金生水，水生木（相生关系）；金克木，木克土，土克水，水克火，火克金（相克关系）。了解并应用这些关系可以帮助你制定更有效的战斗策略。
+          </p>
+        </div>
+        
+        <div class="faq-item py-6">
+          <h3 class="text-xl font-bold mb-3">免费用户和会员用户有什么区别？</h3>
+          <p class="text-gray-300">
+            免费用户可以体验游戏的核心功能，包括每日问答和基础的塔防玩法。会员用户可以获得额外的延期卡、更多的塔抽取机会、专属皮肤和特效、高级卡片槽等特权，享受更丰富的游戏体验。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Download Section with New Design -->
+  <section id="download" class="py-16 download-gradient">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-6">
+        <span class="text-gradient">立即下载</span>
+      </h2>
+      
+      <p class="text-gray-300 text-lg max-w-3xl mx-auto mb-12">
+        现在下载五行塔防，开始你的健康管理与塔防策略之旅。结合健康问答和五行塔防，让你在游戏中关注健康，在健康中享受游戏！
+      </p>
+      
+      <div class="flex flex-col md:flex-row justify-center gap-6 mb-12">
+        <a href="#" class="app-badge">
+          <i class="fab fa-apple text-3xl mr-3"></i>
+          <div class="text-left">
+            <div class="text-xs">下载</div>
+            <div class="text-lg font-semibold">App Store</div>
+          </div>
+        </a>
+        
+        <a href="#" class="app-badge">
+          <i class="fab fa-google-play text-3xl mr-3"></i>
+          <div class="text-left">
+            <div class="text-xs">下载</div>
+            <div class="text-lg font-semibold">Google Play</div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="flex justify-center">
+        <div class="phone-frame animate-float">
+          <div class="phone-screen">
+            <iframe src="screens/home.html" title="主页"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="bg-gray-900 pt-16 pb-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div>
+          <div class="flex items-center mb-6">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center mr-3">
+              <i class="fas fa-chess-rook text-white text-xl"></i>
+            </div>
+            <span class="text-xl font-bold">五行塔防</span>
+          </div>
+          <p class="text-gray-400 mb-4">
+            结合中医五行理念与健康管理的创新塔防游戏。
+          </p>
+          <div class="flex gap-4">
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-weixin text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-weibo text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-qq text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-bilibili text-xl"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-6">探索</h3>
+          <ul class="space-y-3">
+            <li><a href="#features" class="text-gray-400 hover:text-white">功能特点</a></li>
+            <li><a href="#gameplay" class="text-gray-400 hover:text-white">游戏玩法</a></li>
+            <li><a href="#membership" class="text-gray-400 hover:text-white">会员方案</a></li>
+            <li><a href="#prototype" class="text-gray-400 hover:text-white">原型体验</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-6">关于我们</h3>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white">公司介绍</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">团队成员</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">加入我们</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">联系方式</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-6">支持</h3>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white">常见问题</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">用户反馈</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">隐私政策</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">服务条款</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 pt-8 text-center">
+        <p class="text-gray-500"> 2023 五行塔防. 保留所有权利.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create floating elements for hero section
+      const heroElements = document.getElementById('heroElements');
+      const elements = ['金', '木', '水', '火', '土'];
+      const colors = ['#ffd700', '#00a86b', '#1e90ff', '#ff4500', '#cd853f'];
+      
+      for (let i = 0; i < 20; i++) {
+        const idx = Math.floor(Math.random() * 5);
+        const element = document.createElement('div');
+        element.className = 'floating-element';
+        element.textContent = elements[idx];
+        element.style.color = colors[idx];
+        element.style.left = `${Math.random() * 100}%`;
+        element.style.top = `${Math.random() * 100}%`;
+        element.style.fontSize = `${Math.random() * 40 + 20}px`;
+        heroElements.appendChild(element);
+      }
+      
+      // Animate floating elements with GSAP
+      const symbolElements = document.querySelectorAll('.floating-element');
+      
+      symbolElements.forEach((element) => {
+        const duration = 20 + Math.random() * 30;
+        const delay = Math.random() * 10;
+        
+        gsap.to(element, {
+          x: Math.random() * 200 - 100,
+          y: Math.random() * 200 - 100,
+          rotation: Math.random() * 360,
+          duration: duration,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: delay
+        });
+      });
+      
+      // Animate sections on scroll
+      const animateSections = () => {
+        const sections = document.querySelectorAll('section');
+        
+        sections.forEach(section => {
+          gsap.from(section.querySelector('h2'), {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            scrollTrigger: {
+              trigger: section,
+              start: "top 80%",
+              end: "top 50%",
+              toggleActions: "play none none none"
+            }
+          });
+          
+          const cards = section.querySelectorAll('.feature-card, .testimonial-card, .member-card, .benefit-card, .mechanic-card');
+          if (cards.length) {
+            gsap.from(cards, {
+              y: 50,
+              opacity: 0,
+              duration: 0.8,
+              stagger: 0.1,
+              scrollTrigger: {
+                trigger: section,
+                start: "top 70%",
+                end: "top 40%",
+                toggleActions: "play none none none"
+              }
+            });
+          }
+        });
+      };
+      
+      if (typeof ScrollTrigger !== 'undefined') {
+        animateSections();
+      }
+      
+      // Smooth scroll for navigation links
+      const navLinks = document.querySelectorAll('a[href^="#"]');
+      
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 100,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+      // Countdown timer
+      function updateCountdown() {
+        // In a real app, you would calculate the time difference to a specific date
+        // For now, we're just showing static numbers
+        
+        // Simulate countdown by decrementing seconds
+        const secondsEl = document.querySelector('.countdown-item:nth-child(4) .countdown-number');
+        if (secondsEl) {
+          let seconds = parseInt(secondsEl.textContent);
+          seconds = seconds > 0 ? seconds - 1 : 59;
+          secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
+          
+          // If seconds reach 0, decrement minutes
+          if (seconds === 59) {
+            const minutesEl = document.querySelector('.countdown-item:nth-child(3) .countdown-number');
+            if (minutesEl) {
+              let minutes = parseInt(minutesEl.textContent);
+              minutes = minutes > 0 ? minutes - 1 : 59;
+              minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
+              
+              // If minutes reach 0, decrement hours
+              if (minutes === 59) {
+                const hoursEl = document.querySelector('.countdown-item:nth-child(2) .countdown-number');
+                if (hoursEl) {
+                  let hours = parseInt(hoursEl.textContent);
+                  hours = hours > 0 ? hours - 1 : 23;
+                  hoursEl.textContent = hours < 10 ? '0' + hours : hours;
+                  
+                  // If hours reach 0, decrement days
+                  if (hours === 23) {
+                    const daysEl = document.querySelector('.countdown-item:nth-child(1) .countdown-number');
+                    if (daysEl) {
+                      let days = parseInt(daysEl.textContent);
+                      days = days > 0 ? days - 1 : 0;
+                      daysEl.textContent = days;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // Update countdown every second
+      setInterval(updateCountdown, 1000);
+    });
+  </script>
 </body>
-
 </html>

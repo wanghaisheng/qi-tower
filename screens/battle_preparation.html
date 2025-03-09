@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>战斗准备</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .preparation-container {
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 83px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .close-button {
+      font-size: 24px;
+      color: #a0aec0;
+    }
+    
+    .battle-info {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      margin: 20px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .battle-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .element-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+    
+    .element-badge.gold {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+    }
+    
+    .element-badge.wood {
+      background: rgba(0, 168, 107, 0.2);
+      color: #00a86b;
+    }
+    
+    .element-badge.water {
+      background: rgba(30, 144, 255, 0.2);
+      color: #1e90ff;
+    }
+    
+    .element-badge.fire {
+      background: rgba(255, 69, 0, 0.2);
+      color: #ff4500;
+    }
+    
+    .element-badge.earth {
+      background: rgba(205, 133, 63, 0.2);
+      color: #cd853f;
+    }
+    
+    .element-badge i {
+      margin-right: 3px;
+    }
+    
+    .battle-description {
+      font-size: 14px;
+      color: #e0e0e0;
+      margin-bottom: 15px;
+    }
+    
+    .battle-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+    
+    .battle-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .stat-value {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .section-title {
+      padding: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 25px 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .section-title span {
+      color: #a0aec0;
+      font-size: 14px;
+      font-weight: normal;
+    }
+    
+    .map-preview {
+      margin: 0 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+    
+    .map-image {
+      width: 100%;
+      height: 200px;
+      background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .map-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(0deg, rgba(13, 17, 23, 0.7) 0%, rgba(13, 17, 23, 0) 50%);
+      display: flex;
+      align-items: flex-end;
+      padding: 15px;
+    }
+    
+    .map-path {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .map-path svg {
+      width: 80%;
+      height: 80%;
+    }
+    
+    .tower-selection {
+      margin: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    
+    .tower-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .tower-item.selected {
+      background: rgba(245, 208, 32, 0.1);
+      border-color: #f5d020;
+    }
+    
+    .tower-icon {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .tower-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .tower-name {
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .tower-tier {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 10px;
+      color: #f5d020;
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+    
+    .card-selection {
+      margin: 0 20px;
+      display: flex;
+      overflow-x: auto;
+      gap: 15px;
+      padding-bottom: 15px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    .card-selection::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .card-item {
+      flex: 0 0 auto;
+      width: 120px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .card-item.selected {
+      background: rgba(30, 144, 255, 0.1);
+      border-color: #1e90ff;
+    }
+    
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .card-name {
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .card-description {
+      font-size: 10px;
+      color: #a0aec0;
+      text-align: center;
+    }
+    
+    .battle-start {
+      margin: 30px 20px;
+    }
+    
+    .start-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(245, 56, 3, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .start-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 56, 3, 0.4);
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="preparation-container">
+    <div class="header">
+      <h1>战斗准备</h1>
+      <a href="home.html" class="close-button">
+        <i class="fas fa-times"></i>
+      </a>
+    </div>
+    
+    <div class="battle-info">
+      <div class="battle-title">
+        水属性挑战 <span class="element-badge water"><i class="fas fa-tint"></i> 水</span>
+      </div>
+      <div class="battle-description">运用水系塔克制火系敌人，减缓他们的速度并击败他们。</div>
+      
+      <div class="battle-difficulty">
+        <div>难度: 
+          <i class="fas fa-star text-yellow-400"></i>
+          <i class="fas fa-star text-yellow-400"></i>
+          <i class="fas fa-star text-yellow-400"></i>
+          <i class="far fa-star text-gray-400"></i>
+          <i class="far fa-star text-gray-400"></i>
+        </div>
+      </div>
+      
+      <div class="battle-stats">
+        <div class="battle-stat">
+          <div class="stat-icon">
+            <i class="fas fa-skull-crossbones text-red-500"></i>
+          </div>
+          <div class="stat-value">15</div>
+          <div class="stat-label">敌人数量</div>
+        </div>
+        
+        <div class="battle-stat">
+          <div class="stat-icon">
+            <i class="fas fa-chess-rook text-yellow-400"></i>
+          </div>
+          <div class="stat-value">5</div>
+          <div class="stat-label">塔位数量</div>
+        </div>
+        
+        <div class="battle-stat">
+          <div class="stat-icon">
+            <i class="fas fa-heart text-red-500"></i>
+          </div>
+          <div class="stat-value">5</div>
+          <div class="stat-label">生命值</div>
+        </div>
+        
+        <div class="battle-stat">
+          <div class="stat-icon">
+            <i class="fas fa-coins text-yellow-400"></i>
+          </div>
+          <div class="stat-value">500</div>
+          <div class="stat-label">初始金币</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      战场地图
+    </div>
+    
+    <div class="map-preview">
+      <div class="map-image">
+        <div class="map-path">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,150 C50,150 70,50 150,50 C230,50 250,150 330,150 C410,150 400,250 400,250" stroke="#f5d020" stroke-width="4" stroke-dasharray="10 5" fill="none" />
+            <circle cx="0" cy="150" r="8" fill="#ff4500" />
+            <circle cx="400" cy="250" r="8" fill="#1e90ff" />
+            <circle cx="80" cy="100" r="15" stroke="#1e90ff" stroke-width="2" fill="rgba(30, 144, 255, 0.1)" />
+            <circle cx="200" cy="50" r="15" stroke="#1e90ff" stroke-width="2" fill="rgba(30, 144, 255, 0.1)" />
+            <circle cx="280" cy="150" r="15" stroke="#1e90ff" stroke-width="2" fill="rgba(30, 144, 255, 0.1)" />
+            <circle cx="350" cy="200" r="15" stroke="#1e90ff" stroke-width="2" fill="rgba(30, 144, 255, 0.1)" />
+            <circle cx="150" cy="100" r="15" stroke="#1e90ff" stroke-width="2" fill="rgba(30, 144, 255, 0.1)" />
+          </svg>
+        </div>
+        <div class="map-overlay">
+          <div>
+            <div style="font-weight: bold;">冰河谷地</div>
+            <div style="font-size: 12px; color: #a0aec0;">完美的水元素战场</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      选择塔防阵容 <span>已选择: 3/5</span>
+    </div>
+    
+    <div class="tower-selection">
+      <div class="tower-item selected" onclick="toggleSelection(this)">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="tower-icon">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1e90ff" />
+                <stop offset="100%" stop-color="#0077ea" />
+              </linearGradient>
+            </defs>
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#waterGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#4eabff" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+          </svg>
+        </div>
+        <div class="tower-name">冰霜守护塔</div>
+      </div>
+      
+      <div class="tower-item" onclick="toggleSelection(this)">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-icon">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="waterGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1e90ff" />
+                <stop offset="100%" stop-color="#0077ea" />
+              </linearGradient>
+            </defs>
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#waterGradient2)" />
+            <circle cx="100" cy="60" r="25" fill="#4eabff" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+          </svg>
+        </div>
+        <div class="tower-name">水流射击塔</div>
+      </div>
+      
+      <div class="tower-item selected" onclick="toggleSelection(this)">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-icon">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00a86b" />
+                <stop offset="100%" stop-color="#008f5b" />
+              </linearGradient>
+            </defs>
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#woodGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#00c47f" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#00c47f" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#00734a" />
+          </svg>
+        </div>
+        <div class="tower-name">生命树塔</div>
+      </div>
+      
+      <div class="tower-item" onclick="toggleSelection(this)">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-icon">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#cd853f" />
+                <stop offset="100%" stop-color="#b07339" />
+              </linearGradient>
+            </defs>
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#earthGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#d79955" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#d79955" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#966035" />
+          </svg>
+        </div>
+        <div class="tower-name">岩石壁垒塔</div>
+      </div>
+      
+      <div class="tower-item selected" onclick="toggleSelection(this)">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-icon">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffd700" />
+                <stop offset="100%" stop-color="#e6c200" />
+              </linearGradient>
+            </defs>
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#goldGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#ffdf33" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ffdf33" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#b39700" />
+          </svg>
+        </div>
+        <div class="tower-name">金属守卫塔</div>
+      </div>
+      
+      <div class="tower-item" onclick="toggleSelection(this)">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-icon">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neutralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#a0aec0" />
+                <stop offset="100%" stop-color="#718096" />
+              </linearGradient>
+            </defs>
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#neutralGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#cbd5e0" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#cbd5e0" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#4a5568" />
+          </svg>
+        </div>
+        <div class="tower-name">无属性装备塔</div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      选择增益卡片 <span>已选择: 2/3</span>
+    </div>
+    
+    <div class="card-selection">
+      <div class="card-item selected" onclick="toggleCardSelection(this)">
+        <div class="card-icon">
+          <i class="fas fa-bolt text-yellow-400"></i>
+        </div>
+        <div class="card-name">攻击增益</div>
+        <div class="card-description">提升塔攻击力25%</div>
+      </div>
+      
+      <div class="card-item" onclick="toggleCardSelection(this)">
+        <div class="card-icon">
+          <i class="fas fa-tachometer-alt text-green-400"></i>
+        </div>
+        <div class="card-name">速度增益</div>
+        <div class="card-description">提升塔攻击速度20%</div>
+      </div>
+      
+      <div class="card-item selected" onclick="toggleCardSelection(this)">
+        <div class="card-icon">
+          <i class="fas fa-snowflake text-blue-400"></i>
+        </div>
+        <div class="card-name">冰冻减益</div>
+        <div class="card-description">减缓敌人速度35%</div>
+      </div>
+      
+      <div class="card-item" onclick="toggleCardSelection(this)">
+        <div class="card-icon">
+          <i class="fas fa-shield-alt text-gray-400"></i>
+        </div>
+        <div class="card-name">防御减益</div>
+        <div class="card-description">降低敌人防御30%</div>
+      </div>
+      
+      <div class="card-item" onclick="toggleCardSelection(this)">
+        <div class="card-icon">
+          <i class="fas fa-fire-alt text-red-500"></i>
+        </div>
+        <div class="card-name">火焰减益</div>
+        <div class="card-description">敌人持续受到伤害</div>
+      </div>
+    </div>
+    
+    <div class="battle-start">
+      <a href="battle.html" class="start-button">
+        开始战斗
+      </a>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions.html" class="nav-item">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item active">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate battle info
+      gsap.from('.battle-info', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate map
+      gsap.from('.map-preview', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.4,
+        ease: 'power3.out'
+      });
+      
+      // Animate tower selection
+      gsap.from('.tower-item', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      // Animate card selection
+      gsap.from('.card-item', {
+        x: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate battle start button
+      gsap.from('.battle-start', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 1,
+        ease: 'power3.out'
+      });
+    });
+    
+    function toggleSelection(element) {
+      element.classList.toggle('selected');
+    }
+    
+    function toggleCardSelection(element) {
+      element.classList.toggle('selected');
+    }
+  </script>
+</body>
+</html>
+

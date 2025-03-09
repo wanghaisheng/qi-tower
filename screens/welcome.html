@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>欢迎界面</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .welcome-container {
+      height: calc(100% - 44px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .welcome-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.6) 100%);
+      z-index: 1;
+    }
+    
+    .game-logo {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      margin-top: 80px;
+    }
+    
+    .logo-img {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+      filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+      animation: pulse 2s infinite ease-in-out;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .game-title {
+      font-size: 36px;
+      font-weight: bold;
+      margin-top: 20px;
+      background: linear-gradient(to right, #f5d020, #f53803);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .game-subtitle {
+      font-size: 18px;
+      margin-top: 10px;
+      color: #e0e0e0;
+    }
+    
+    .welcome-buttons {
+      position: relative;
+      z-index: 2;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 50px;
+    }
+    
+    .button {
+      padding: 15px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .button:hover::before {
+      left: 100%;
+    }
+    
+    .login-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(245, 56, 3, 0.4);
+    }
+    
+    .register-button {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .guest-button {
+      background: transparent;
+      color: #e0e0e0;
+      font-size: 16px;
+    }
+    
+    .element-symbols {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+    
+    .element {
+      position: absolute;
+      opacity: 0.4;
+      font-size: 40px;
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+    }
+    
+    .element.gold { color: #ffd700; }
+    .element.wood { color: #00a86b; }
+    .element.water { color: #1e90ff; }
+    .element.fire { color: #ff4500; }
+    .element.earth { color: #cd853f; }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="welcome-container">
+    <!-- Floating Elements Animation -->
+    <div class="element-symbols" id="elements">
+      <!-- Elements will be added by JavaScript -->
+    </div>
+    
+    <div class="game-logo">
+      <div class="logo-img">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="gold" stroke-width="2"/>
+          <path d="M50,5 L50,95 M5,50 L95,50" stroke="gold" stroke-width="2"/>
+          <circle cx="50" cy="50" r="20" fill="none" stroke="gold" stroke-width="2"/>
+          <circle cx="50" cy="27.5" r="7.5" fill="#ffd700"/>
+          <circle cx="50" cy="72.5" r="7.5" fill="#cd853f"/>
+          <circle cx="27.5" cy="50" r="7.5" fill="#00a86b"/>
+          <circle cx="72.5" cy="50" r="7.5" fill="#ff4500"/>
+          <circle cx="50" cy="50" r="10" fill="#1e90ff"/>
+        </svg>
+      </div>
+      <h1 class="game-title">五行塔防</h1>
+      <p class="game-subtitle">平衡五行之力，守护你的精神家园</p>
+    </div>
+    
+    <div class="welcome-buttons">
+      <a href="login.html" class="button login-button">
+        登录
+      </a>
+      <a href="login.html" class="button register-button">
+        注册新账号
+      </a>
+      <a href="home.html" class="button guest-button">
+        游客体验 <i class="fas fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create floating elements
+      const elements = document.getElementById('elements');
+      const symbols = ['金', '木', '水', '火', '土'];
+      const classes = ['gold', 'wood', 'water', 'fire', 'earth'];
+      
+      for (let i = 0; i < 15; i++) {
+        const idx = Math.floor(Math.random() * 5);
+        const element = document.createElement('div');
+        element.className = `element ${classes[idx]}`;
+        element.textContent = symbols[idx];
+        element.style.left = `${Math.random() * 100}%`;
+        element.style.top = `${Math.random() * 100}%`;
+        element.style.opacity = (Math.random() * 0.5) + 0.2;
+        element.style.fontSize = `${Math.random() * 30 + 20}px`;
+        elements.appendChild(element);
+      }
+      
+      // Animate floating elements with GSAP
+      const elementNodes = document.querySelectorAll('.element');
+      
+      elementNodes.forEach((element) => {
+        const duration = 10 + Math.random() * 20;
+        const delay = Math.random() * 5;
+        
+        gsap.to(element, {
+          x: Math.random() * 100 - 50,
+          y: Math.random() * 100 - 50,
+          rotation: Math.random() * 360,
+          duration: duration,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: delay
+        });
+      });
+      
+      // Animate logo
+      gsap.from('.game-logo', {
+        y: -50,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'back.out(1.7)'
+      });
+      
+      // Animate buttons
+      gsap.from('.welcome-buttons .button', {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.2,
+        delay: 0.5,
+        ease: 'power3.out'
+      });
+    });
+  </script>
+</body>
+</html>
+

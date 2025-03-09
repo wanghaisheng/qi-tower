@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员中心</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .membership-container {
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 83px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .close-button {
+      font-size: 24px;
+      color: #a0aec0;
+    }
+    
+    .membership-banner {
+      margin: 20px;
+      background: linear-gradient(135deg, #f5d020, #f53803);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .membership-banner::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+      background-size: cover;
+      opacity: 0.1;
+      z-index: 0;
+    }
+    
+    .banner-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .banner-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .banner-description {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .crown-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    
+    .section-title {
+      padding: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 25px 0 15px;
+    }
+    
+    .membership-plans {
+      margin: 0 20px;
+    }
+    
+    .plan-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .plan-card:hover, .plan-card.popular {
+      background: rgba(245, 208, 32, 0.1);
+      border-color: rgba(245, 208, 32, 0.3);
+      transform: translateY(-5px);
+    }
+    
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .plan-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .plan-price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #f5d020;
+    }
+    
+    .popular-tag {
+      display: inline-block;
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+    
+    .plan-features {
+      margin-bottom: 20px;
+    }
+    
+    .plan-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .plan-feature i {
+      color: #f5d020;
+    }
+    
+    .subscribe-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(245, 56, 3, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .subscribe-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 56, 3, 0.4);
+    }
+    
+    .subscription-benefits {
+      margin: 0 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+    }
+    
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .benefit-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(245, 208, 32, 0.1);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #f5d020;
+      flex-shrink: 0;
+    }
+    
+    .benefit-content {
+      flex: 1;
+    }
+    
+    .benefit-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .benefit-description {
+      font-size: 14px;
+      color: #a0aec0;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="membership-container">
+    <div class="header">
+      <h1>会员中心</h1>
+      <a href="profile.html" class="close-button">
+        <i class="fas fa-times"></i>
+      </a>
+    </div>
+    
+    <div class="membership-banner">
+      <div class="banner-content">
+        <div class="crown-icon">
+          <i class="fas fa-crown"></i>
+        </div>
+        <div class="banner-title">升级为高级会员</div>
+        <div class="banner-description">解锁所有塔延期特权，提升游戏体验</div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      会员方案
+    </div>
+    
+    <div class="membership-plans">
+      <div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-title">月度会员</div>
+          <div class="plan-price">¥28/月</div>
+        </div>
+        <div class="plan-features">
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>每天3张延期卡</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>每日额外5个塔抽取机会</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>获得专属皮肤</span>
+          </div>
+        </div>
+        <button class="subscribe-button">立即订阅</button>
+      </div>
+      
+      <div class="plan-card popular">
+        <div class="plan-header">
+          <div class="plan-title">季度会员 <span class="popular-tag">最受欢迎</span></div>
+          <div class="plan-price">¥68/季</div>
+        </div>
+        <div class="plan-features">
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>每天5张延期卡</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>每日额外10个塔抽取机会</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>获得专属皮肤和特效</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>解锁高级卡片槽</span>
+          </div>
+        </div>
+        <button class="subscribe-button">立即订阅</button>
+      </div>
+      
+      <div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-title">年度会员</div>
+          <div class="plan-price">¥198/年</div>
+        </div>
+        <div class="plan-features">
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>无限延期卡</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>每日额外15个塔抽取机会</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>获得所有皮肤和特效</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>解锁高级卡片槽和合成功能</span>
+          </div>
+          <div class="plan-feature">
+            <i class="fas fa-check-circle"></i>
+            <span>每月专属礼包</span>
+          </div>
+        </div>
+        <button class="subscribe-button">立即订阅</button>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      会员专享权益
+    </div>
+    
+    <div class="subscription-benefits">
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="benefit-content">
+          <div class="benefit-title">延期使用塔</div>
+          <div class="benefit-description">会员可以使用延期卡，让当日获得的塔延续到之后的几天使用，不会因为时间限制而失效。</div>
+        </div>
+      </div>
+      
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-chess-rook"></i>
+        </div>
+        <div class="benefit-content">
+          <div class="benefit-title">更多塔抽取机会</div>
+          <div class="benefit-description">会员每日可以获得额外的塔抽取机会，提升战斗力和游戏策略深度。</div>
+        </div>
+      </div>
+      
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-layer-group"></i>
+        </div>
+        <div class="benefit-content">
+          <div class="benefit-title">额外卡片槽</div>
+          <div class="benefit-description">会员可以为塔装备更多的增益或减益卡片，提升游戏策略性和塔的能力。</div>
+        </div>
+      </div>
+      
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-gift"></i>
+        </div>
+        <div class="benefit-content">
+          <div class="benefit-title">专属皮肤和特效</div>
+          <div class="benefit-description">会员可以获得专属的塔皮肤和战斗特效，让游戏更加个性化和精彩。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions.html" class="nav-item">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item active">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate banner
+      gsap.from('.membership-banner', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate crown icon
+      gsap.from('.crown-icon', {
+        scale: 0,
+        rotation: 360,
+        opacity: 0,
+        duration: 1,
+        delay: 0.4,
+        ease: 'back.out(1.7)'
+      });
+      
+      // Animate section titles
+      gsap.from('.section-title', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      // Animate plan cards
+      gsap.from('.plan-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        delay: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate benefits
+      gsap.from('.benefit-item', {
+        x: -30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        delay: 1,
+        ease: 'power3.out'
+      });
+    });
+  </script>
+</body>
+</html>

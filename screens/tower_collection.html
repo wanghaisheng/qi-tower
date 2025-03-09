@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>塔收集</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .collection-container {
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 83px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .filter-tabs {
+      padding: 15px 20px;
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    .filter-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .filter-tab {
+      padding: 8px 15px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      font-size: 14px;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      color: #a0aec0;
+    }
+    
+    .filter-tab.active {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+    }
+    
+    .towerspinner {
+      padding: 0 20px 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .tower-count {
+      font-size: 16px;
+      color: #a0aec0;
+    }
+    
+    .tower-count span {
+      color: #f5d020;
+      font-weight: bold;
+    }
+    
+    .expiry-time {
+      font-size: 14px;
+      background: rgba(255, 69, 0, 0.2);
+      color: #ff4500;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .tower-grid {
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    .tower-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .tower-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(245, 208, 32, 0.3);
+    }
+    
+    .tower-tier {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 12px;
+      color: #f5d020;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    
+    .tower-image {
+      width: 100%;
+      height: 140px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .tower-image svg {
+      width: 100px;
+      height: 100px;
+    }
+    
+    .tower-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .tower-name {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
+    .tower-element {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: #a0aec0;
+    }
+    
+    .tower-element span {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+    
+    .element-badge.gold {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+    }
+    
+    .element-badge.wood {
+      background: rgba(0, 168, 107, 0.2);
+      color: #00a86b;
+    }
+    
+    .element-badge.water {
+      background: rgba(30, 144, 255, 0.2);
+      color: #1e90ff;
+    }
+    
+    .element-badge.fire {
+      background: rgba(255, 69, 0, 0.2);
+      color: #ff4500;
+    }
+    
+    .element-badge.earth {
+      background: rgba(205, 133, 63, 0.2);
+      color: #cd853f;
+    }
+    
+    .element-badge i {
+      margin-right: 3px;
+    }
+    
+    .tower-stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .tower-stat {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .tower-expiry {
+      font-size: 12px;
+      color: #ff4500;
+      margin-top: auto;
+      padding-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .tower-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .tower-action {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .fusion-button {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    
+    .equip-button {
+      background: rgba(30, 144, 255, 0.2);
+      color: #1e90ff;
+      border: 1px solid rgba(30, 144, 255, 0.3);
+    }
+    
+    .action-float {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #f5d020, #f53803);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      box-shadow: 0 5px 15px rgba(245, 56, 3, 0.4);
+      z-index: 100;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+    
+    .empty-state {
+      display: none; /* Initially hidden, shown when no towers are available */
+      padding: 50px 20px;
+      text-align: center;
+    }
+    
+    .empty-icon {
+      font-size: 60px;
+      color: rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .empty-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .empty-description {
+      font-size: 14px;
+      color: #a0aec0;
+      margin-bottom: 20px;
+    }
+    
+    .empty-button {
+      background: linear-gradient(90deg, #f5d020, #f53803);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0 auto;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="collection-container">
+    <div class="header">
+      <h1>我的塔库</h1>
+      <a href="card_inventory.html">
+        <i class="fas fa-layer-group text-2xl text-gray-400"></i>
+      </a>
+    </div>
+    
+    <div class="filter-tabs">
+      <div class="filter-tab active">全部</div>
+      <div class="filter-tab">金系塔</div>
+      <div class="filter-tab">木系塔</div>
+      <div class="filter-tab">水系塔</div>
+      <div class="filter-tab">火系塔</div>
+      <div class="filter-tab">土系塔</div>
+      <div class="filter-tab">无属性塔</div>
+    </div>
+    
+    <div class="towerspinner">
+      <div class="tower-count">今日塔: <span>8</span>/12</div>
+      <div class="expiry-time"><i class="fas fa-clock"></i> 23小时后过期</div>
+    </div>
+    
+    <!-- Empty State (hidden by default) -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <i class="fas fa-chess-rook"></i>
+      </div>
+      <h3 class="empty-title">暂无塔</h3>
+      <p class="empty-description">完成每日健康问答获取塔来增强你的防线。</p>
+      <a href="daily_questions.html" class="empty-button">
+        去答题 <i class="fas fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+    
+    <div class="tower-grid">
+      <a href="tower_fusion.html" class="tower-card">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-image">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffd700" />
+                <stop offset="100%" stop-color="#e6c200" />
+              </linearGradient>
+              <filter id="goldGlow">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="90" fill="none" stroke="url(#goldGradient)" stroke-width="3" />
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#goldGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#ffdf33" filter="url(#goldGlow)" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ffdf33" filter="url(#goldGlow)" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#b39700" />
+            <path d="M90,50 L110,70 M110,50 L90,70" stroke="#b39700" stroke-width="5" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="tower-info">
+          <div class="tower-name">金属守卫塔</div>
+          <div class="tower-element">
+            元素: <span class="element-badge gold"><i class="fas fa-coins"></i> 金</span>
+          </div>
+          <div class="tower-stats">
+            <div class="tower-stat">
+              <i class="fas fa-bolt"></i> 攻击: 85
+            </div>
+            <div class="tower-stat">
+              <i class="fas fa-shield-alt"></i> 防御: 120
+            </div>
+          </div>
+          <div class="tower-expiry">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        <div class="tower-actions">
+          <div class="tower-action fusion-button">合成</div>
+          <div class="tower-action equip-button">装备</div>
+        </div>
+      </a>
+      
+      <a href="tower_fusion.html" class="tower-card">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-image">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00a86b" />
+                <stop offset="100%" stop-color="#008f5b" />
+              </linearGradient>
+              <filter id="woodGlow">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="90" fill="none" stroke="url(#woodGradient)" stroke-width="3" />
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#woodGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#00c47f" filter="url(#woodGlow)" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#00c47f" filter="url(#woodGlow)" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#00734a" />
+            <circle cx="100" cy="60" r="15" fill="#004d32" />
+            <path d="M90,60 C90,55 95,50 100,50 C105,50 110,55 110,60 C110,65 105,70 100,70 C95,70 90,65 90,60 Z" fill="#ffffff" opacity="0.3" />
+          </svg>
+        </div>
+        <div class="tower-info">
+          <div class="tower-name">生命树塔</div>
+          <div class="tower-element">
+            元素: <span class="element-badge wood"><i class="fas fa-leaf"></i> 木</span>
+          </div>
+          <div class="tower-stats">
+            <div class="tower-stat">
+              <i class="fas fa-heart"></i> 治愈: 65
+            </div>
+            <div class="tower-stat">
+              <i class="fas fa-shield-alt"></i> 防御: 40
+            </div>
+          </div>
+          <div class="tower-expiry">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        <div class="tower-actions">
+          <div class="tower-action fusion-button">合成</div>
+          <div class="tower-action equip-button">装备</div>
+        </div>
+      </a>
+      
+      <a href="tower_fusion.html" class="tower-card">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="tower-image">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1e90ff" />
+                <stop offset="100%" stop-color="#0077ea" />
+              </linearGradient>
+              <filter id="waterGlow">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="90" fill="none" stroke="url(#waterGradient)" stroke-width="3" />
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#waterGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#4eabff" filter="url(#waterGlow)" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#4eabff" filter="url(#waterGlow)" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#0069d1" />
+            <path d="M90,60 Q100,45 110,60 Q100,75 90,60 Z" fill="#0069d1" />
+            <path d="M87,55 Q100,35 113,55 Q100,75 87,55 Z" fill="#0069d1" opacity="0.5" />
+          </svg>
+        </div>
+        <div class="tower-info">
+          <div class="tower-name">冰霜守护塔</div>
+          <div class="tower-element">
+            元素: <span class="element-badge water"><i class="fas fa-tint"></i> 水</span>
+          </div>
+          <div class="tower-stats">
+            <div class="tower-stat">
+              <i class="fas fa-bolt"></i> 攻击: 60
+            </div>
+            <div class="tower-stat">
+              <i class="fas fa-snowflake"></i> 减速: 85
+            </div>
+          </div>
+          <div class="tower-expiry">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        <div class="tower-actions">
+          <div class="tower-action fusion-button">合成</div>
+          <div class="tower-action equip-button">装备</div>
+        </div>
+      </a>
+      
+      <a href="tower_fusion.html" class="tower-card">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-image">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="fireGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff4500" />
+                <stop offset="100%" stop-color="#e53e00" />
+              </linearGradient>
+              <filter id="fireGlow">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="90" fill="none" stroke="url(#fireGradient)" stroke-width="3" />
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#fireGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#ff6433" filter="url(#fireGlow)" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#ff6433" filter="url(#fireGlow)" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#cc3700" />
+            <path d="M100,45 Q95,55 90,60 Q100,65 110,60 Q105,55 100,45 Z" fill="#cc3700" />
+            <path d="M100,40 Q93,55 85,62 Q100,70 115,62 Q107,55 100,40 Z" fill="#cc3700" opacity="0.5" />
+          </svg>
+        </div>
+        <div class="tower-info">
+          <div class="tower-name">烈焰喷射塔</div>
+          <div class="tower-element">
+            元素: <span class="element-badge fire"><i class="fas fa-fire"></i> 火</span>
+          </div>
+          <div class="tower-stats">
+            <div class="tower-stat">
+              <i class="fas fa-bolt"></i> 攻击: 95
+            </div>
+            <div class="tower-stat">
+              <i class="fas fa-tachometer-alt"></i> 攻速: 75
+            </div>
+          </div>
+          <div class="tower-expiry">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        <div class="tower-actions">
+          <div class="tower-action fusion-button">合成</div>
+          <div class="tower-action equip-button">装备</div>
+        </div>
+      </a>
+      
+      <a href="tower_fusion.html" class="tower-card">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-image">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#cd853f" />
+                <stop offset="100%" stop-color="#b07339" />
+              </linearGradient>
+              <filter id="earthGlow">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="90" fill="none" stroke="url(#earthGradient)" stroke-width="3" />
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#earthGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#d79955" filter="url(#earthGlow)" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#d79955" filter="url(#earthGlow)" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#966035" />
+            <path d="M85,55 L115,55 L115,65 L85,65 Z" fill="#966035" />
+            <path d="M90,50 L110,50 L110,55 L90,55 Z" fill="#966035" />
+            <path d="M95,45 L105,45 L105,50 L95,50 Z" fill="#966035" />
+          </svg>
+        </div>
+        <div class="tower-info">
+          <div class="tower-name">岩石壁垒塔</div>
+          <div class="tower-element">
+            元素: <span class="element-badge earth"><i class="fas fa-mountain"></i> 土</span>
+          </div>
+          <div class="tower-stats">
+            <div class="tower-stat">
+              <i class="fas fa-shield-alt"></i> 防御: 150
+            </div>
+            <div class="tower-stat">
+              <i class="fas fa-bolt"></i> 攻击: 30
+            </div>
+          </div>
+          <div class="tower-expiry">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        <div class="tower-actions">
+          <div class="tower-action fusion-button">合成</div>
+          <div class="tower-action equip-button">装备</div>
+        </div>
+      </a>
+      
+      <a href="tower_fusion.html" class="tower-card">
+        <div class="tower-tier">
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tower-image">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neutralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#a0aec0" />
+                <stop offset="100%" stop-color="#718096" />
+              </linearGradient>
+              <filter id="neutralGlow">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="90" fill="none" stroke="url(#neutralGradient)" stroke-width="3" />
+            <rect x="70" y="20" width="60" height="160" rx="10" fill="url(#neutralGradient)" />
+            <circle cx="100" cy="60" r="25" fill="#cbd5e0" filter="url(#neutralGlow)" />
+            <path d="M80,130 C80,100 120,100 120,130 L120,160 L80,160 Z" fill="#cbd5e0" filter="url(#neutralGlow)" />
+            <path d="M70,160 L130,160 L130,170 C130,177 124,183 117,183 L83,183 C76,183 70,177 70,170 Z" fill="#4a5568" />
+            <path d="M90,60 L110,60" stroke="#4a5568" stroke-width="5" stroke-linecap="round" />
+            <path d="M100,50 L100,70" stroke="#4a5568" stroke-width="5" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="tower-info">
+          <div class="tower-name">无属性装备塔</div>
+          <div class="tower-element">
+            元素: <span style="background: rgba(160, 174, 192, 0.2); color: #a0aec0; padding: 3px 8px; border-radius: 15px; font-size: 12px;"><i class="fas fa-circle"></i> 无</span>
+          </div>
+          <div class="tower-stats">
+            <div class="tower-stat">
+              <i class="fas fa-bolt"></i> 攻击: 20
+            </div>
+            <div class="tower-stat">
+              <i class="fas fa-puzzle-piece"></i> 卡槽: 3
+            </div>
+          </div>
+          <div class="tower-expiry">
+            <i class="fas fa-hourglass-half"></i> 23小时后过期
+          </div>
+        </div>
+        <div class="tower-actions">
+          <div class="tower-action fusion-button">合成</div>
+          <div class="tower-action equip-button">装备</div>
+        </div>
+      </a>
+    </div>
+  </div>
+  
+  <a href="battle_preparation.html" class="action-float">
+    <i class="fas fa-play"></i>
+  </a>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions.html" class="nav-item">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item active">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show empty state if towers are empty
+      // const showEmptyState = false; // Set to true to show empty state
+      // if (showEmptyState) {
+      //   document.querySelector('.tower-grid').style.display = 'none';
+      //   document.getElementById('emptyState').style.display = 'block';
+      // }
+      
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate filter tabs
+      gsap.from('.filter-tab', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate tower count
+      gsap.from('.towerspinner', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.4,
+        ease: 'power3.out'
+      });
+      
+      // Animate tower cards
+      gsap.from('.tower-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      // Animate action float
+      gsap.from('.action-float', {
+        scale: 0,
+        opacity: 0,
+        duration: 0.8,
+        delay: 1,
+        ease: 'back.out(1.7)'
+      });
+      
+      // Filter tab click handler
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs
+          filterTabs.forEach(t => t.classList.remove('active'));
+          // Add active class to clicked tab
+          tab.classList.add('active');
+          
+          // Here you would filter the towers based on the selected tab
+          // For this prototype we'll just show all towers
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

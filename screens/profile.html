@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人资料</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .ios-status-bar {
+      height: 44px;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    .profile-container {
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 83px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #1a1a2e 0%, #0d1117 100%);
+    }
+    
+    .header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .profile-card {
+      margin: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .profile-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+      background: linear-gradient(135deg, #f5d020, #f53803);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+      color: #fff;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .profile-info {
+      flex: 1;
+    }
+    
+    .profile-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .profile-id {
+      font-size: 14px;
+      color: #a0aec0;
+      margin-bottom: 10px;
+    }
+    
+    .profile-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      background: rgba(245, 208, 32, 0.2);
+      border-radius: 20px;
+      font-size: 12px;
+      color: #f5d020;
+      gap: 5px;
+    }
+    
+    .profile-stats {
+      padding: 20px;
+      display: flex;
+      justify-content: space-around;
+    }
+    
+    .profile-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #f5d020;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .section-title {
+      padding: 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 25px 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .element-powers {
+      margin: 0 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .element-power {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .element-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-right: 15px;
+    }
+    
+    .gold-icon {
+      background: linear-gradient(135deg, #ffd700, #e6c200);
+      color: #0d1117;
+    }
+    
+    .wood-icon {
+      background: linear-gradient(135deg, #00a86b, #008f5b);
+      color: #fff;
+    }
+    
+    .water-icon {
+      background: linear-gradient(135deg, #1e90ff, #0077ea);
+      color: #fff;
+    }
+    
+    .fire-icon {
+      background: linear-gradient(135deg, #ff4500, #e53e00);
+      color: #fff;
+    }
+    
+    .earth-icon {
+      background: linear-gradient(135deg, #cd853f, #b07339);
+      color: #fff;
+    }
+    
+    .element-details {
+      flex: 1;
+    }
+    
+    .element-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .element-progress {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+    
+    .gold-fill {
+      background: linear-gradient(90deg, #ffd700, #e6c200);
+      width: 75%;
+    }
+    
+    .wood-fill {
+      background: linear-gradient(90deg, #00a86b, #008f5b);
+      width: 90%;
+    }
+    
+    .water-fill {
+      background: linear-gradient(90deg, #1e90ff, #0077ea);
+      width: 60%;
+    }
+    
+    .fire-fill {
+      background: linear-gradient(90deg, #ff4500, #e53e00);
+      width: 45%;
+    }
+    
+    .earth-fill {
+      background: linear-gradient(90deg, #cd853f, #b07339);
+      width: 30%;
+    }
+    
+    .element-value {
+      font-size: 14px;
+      color: #f5d020;
+      margin-left: 10px;
+    }
+    
+    .achievements {
+      margin: 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .achievement {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      width: calc(50% - 8px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .achievement-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: rgba(245, 208, 32, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #f5d020;
+    }
+    
+    .achievement-info {
+      flex: 1;
+    }
+    
+    .achievement-name {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .achievement-desc {
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    
+    .settings-list {
+      margin: 0 20px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .settings-item {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+    
+    .settings-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin-right: 15px;
+    }
+    
+    .settings-text {
+      flex: 1;
+      font-size: 16px;
+    }
+    
+    .settings-arrow {
+      color: #a0aec0;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-item.active {
+      color: #f5d020;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="ios-status-bar">
+    <div class="left">
+      <span>9:41</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi ml-2"></i>
+      <i class="fas fa-battery-full ml-2"></i>
+    </div>
+  </div>
+  
+  <div class="profile-container">
+    <div class="header">
+      <h1>个人资料</h1>
+      <a href="settings.html">
+        <i class="fas fa-cog text-2xl text-gray-400"></i>
+      </a>
+    </div>
+    
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <span>U</span>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">用户名</div>
+          <div class="profile-id">ID: 12345678</div>
+          <div class="profile-status">
+            <i class="fas fa-crown"></i>
+            <span>高级会员</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="stat-value">Lv.15</div>
+          <div class="stat-label">等级</div>
+        </div>
+        
+        <div class="profile-stat">
+          <div class="stat-value">24</div>
+          <div class="stat-label">塔数量</div>
+        </div>
+        
+        <div class="profile-stat">
+          <div class="stat-value">48</div>
+          <div class="stat-label">战斗次数</div>
+        </div>
+        
+        <div class="profile-stat">
+          <div class="stat-value">85%</div>
+          <div class="stat-label">胜率</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      五行能力
+    </div>
+    
+    <div class="element-powers">
+      <div class="element-power">
+        <div class="element-icon gold-icon">
+          <i class="fas fa-coins"></i>
+        </div>
+        <div class="element-details">
+          <div class="element-name">金系等级</div>
+          <div class="element-progress">
+            <div class="progress-fill gold-fill"></div>
+          </div>
+        </div>
+        <div class="element-value">Lv.8</div>
+      </div>
+      
+      <div class="element-power">
+        <div class="element-icon wood-icon">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <div class="element-details">
+          <div class="element-name">木系等级</div>
+          <div class="element-progress">
+            <div class="progress-fill wood-fill"></div>
+          </div>
+        </div>
+        <div class="element-value">Lv.9</div>
+      </div>
+      
+      <div class="element-power">
+        <div class="element-icon water-icon">
+          <i class="fas fa-tint"></i>
+        </div>
+        <div class="element-details">
+          <div class="element-name">水系等级</div>
+          <div class="element-progress">
+            <div class="progress-fill water-fill"></div>
+          </div>
+        </div>
+        <div class="element-value">Lv.6</div>
+      </div>
+      
+      <div class="element-power">
+        <div class="element-icon fire-icon">
+          <i class="fas fa-fire"></i>
+        </div>
+        <div class="element-details">
+          <div class="element-name">火系等级</div>
+          <div class="element-progress">
+            <div class="progress-fill fire-fill"></div>
+          </div>
+        </div>
+        <div class="element-value">Lv.5</div>
+      </div>
+      
+      <div class="element-power">
+        <div class="element-icon earth-icon">
+          <i class="fas fa-mountain"></i>
+        </div>
+        <div class="element-details">
+          <div class="element-name">土系等级</div>
+          <div class="element-progress">
+            <div class="progress-fill earth-fill"></div>
+          </div>
+        </div>
+        <div class="element-value">Lv.3</div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      成就
+    </div>
+    
+    <div class="achievements">
+      <div class="achievement">
+        <div class="achievement-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="achievement-info">
+          <div class="achievement-name">健康达人</div>
+          <div class="achievement-desc">连续30天完成健康问答</div>
+        </div>
+      </div>
+      
+      <div class="achievement">
+        <div class="achievement-icon">
+          <i class="fas fa-medal"></i>
+        </div>
+        <div class="achievement-info">
+          <div class="achievement-name">战斗大师</div>
+          <div class="achievement-desc">完成50场战斗</div>
+        </div>
+      </div>
+      
+      <div class="achievement">
+        <div class="achievement-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="achievement-info">
+          <div class="achievement-name">收集狂热者</div>
+          <div class="achievement-desc">收集20个不同的塔</div>
+        </div>
+      </div>
+      
+      <div class="achievement">
+        <div class="achievement-icon">
+          <i class="fas fa-crown"></i>
+        </div>
+        <div class="achievement-info">
+          <div class="achievement-name">五行平衡</div>
+          <div class="achievement-desc">五行能力全部达到5级</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      设置
+    </div>
+    
+    <div class="settings-list">
+      <a href="membership.html" class="settings-item">
+        <div class="settings-icon">
+          <i class="fas fa-crown text-yellow-400"></i>
+        </div>
+        <div class="settings-text">会员中心</div>
+        <div class="settings-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
+      
+      <a href="#" class="settings-item">
+        <div class="settings-icon">
+          <i class="fas fa-bell text-blue-400"></i>
+        </div>
+        <div class="settings-text">通知设置</div>
+        <div class="settings-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
+      
+      <a href="#" class="settings-item">
+        <div class="settings-icon">
+          <i class="fas fa-shield-alt text-green-400"></i>
+        </div>
+        <div class="settings-text">隐私设置</div>
+        <div class="settings-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
+      
+      <a href="#" class="settings-item">
+        <div class="settings-icon">
+          <i class="fas fa-question-circle text-purple-400"></i>
+        </div>
+        <div class="settings-text">帮助与反馈</div>
+        <div class="settings-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
+      
+      <a href="welcome.html" class="settings-item">
+        <div class="settings-icon">
+          <i class="fas fa-sign-out-alt text-red-400"></i>
+        </div>
+        <div class="settings-text">退出登录</div>
+        <div class="settings-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>主页</span>
+    </a>
+    <a href="daily_questions.html" class="nav-item">
+      <i class="fas fa-question-circle"></i>
+      <span>问答</span>
+    </a>
+    <a href="battle_preparation.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span>战斗</span>
+    </a>
+    <a href="tower_collection.html" class="nav-item">
+      <i class="fas fa-chess-rook"></i>
+      <span>塔库</span>
+    </a>
+    <a href="profile.html" class="nav-item active">
+      <i class="fas fa-user"></i>
+      <span>我的</span>
+    </a>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate header
+      gsap.from('.header', {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate profile card
+      gsap.from('.profile-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+      
+      // Animate section titles
+      gsap.from('.section-title', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        delay: 0.4,
+        ease: 'power3.out'
+      });
+      
+      // Animate element powers
+      gsap.from('.element-power', {
+        x: -30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+      
+      // Animate achievements
+      gsap.from('.achievement', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 0.8,
+        ease: 'power3.out'
+      });
+      
+      // Animate settings
+      gsap.from('.settings-item', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        delay: 1,
+        ease: 'power3.out'
+      });
+    });
+  </script>
+</body>
+</html>
